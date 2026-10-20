@@ -1,9 +1,9 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the user describes a project, feature, or change in brief prose; when the work may span more than one session; when the user asks what is missing, what to consider, how big this is, or how to split the work; and before dispatching subagents or writing a task list. Also use when an agent is about to jump straight to subtasks on an underspecified request. 用于需求展开、立项梳理、判断该补哪些细节、以及拆分任务之前。Not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Software-engineering only: use when the deliverable is code that must build, run, and be verified by execution — a script, service, tool, agent, or a change to an existing codebase. Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. 用于软件工程类需求的展开与立项梳理；非软件类需求（文档、方案、调研、活动策划）请勿使用。Not for a single obvious edit that one sentence already specifies, and not for non-software deliverables."
 license: MIT
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
   status: draft
 ---
 
@@ -19,10 +19,43 @@ metadata:
 
 ## 门禁
 
+- **领域闸门未通过 → 本 skill 全程不介入。**
 - 没有通过的 frame 文档 → 不许 plan、不许切任务、不许写代码。
 - 展开阶段出现任务列表 → 本轮作废，重来。
 
-## 第 0 步：分流（先算流程税）
+## 第 0 步：领域闸门
+
+本 skill 只服务**软件工程**：交付物必须是**代码，且它能构建、运行、被运行结果验证**。
+
+判据只有一条：
+
+> 交付物是不是"一个能跑起来、并且能用运行结果验证的东西"？
+
+| 需求 | 判定 | 动作 |
+|---|---|---|
+| 自动化脚本 / 服务 / 工具 / agent | 是 | 进入第 1 步 |
+| 成体系地改造存量代码库 | 是 | 进入第 1 步 |
+| 写一份方案 / 调研 / 汇报 / 文章 | **不是** | 退化 |
+| 策划活动、设计流程、组织安排 | **不是** | 退化 |
+| 混合（"做个产品，含技术方案 + 运营方案"） | **部分** | **只对软件部分走流程**，其余回正常沟通；两者不要混在一份文档里 |
+
+**不确定时不要猜**，问一句（一句话，不要列选项）：
+
+> "这个东西最后要交的是能跑的代码，还是一份文档/方案？"
+
+### 退化之后做什么
+
+"退化"不等于敷衍。它意味着：
+
+- **不**产出 frame 文档、**不**判档位、**不**设门禁、**不**逐项走横切面
+- **仍然**按正常对话澄清目标、给建议、必要时给结构化输出
+- 但要明确说一句："这不是软件工程类需求，我不启用立项展开。"——让用户知道你**选择**了不启用，而不是漏了它
+
+### 为什么闸门放最前面
+
+本流程的成本主要花在"逼你想清楚可验证的东西"上。对一份方案或一次活动策划，这个要求是错位的：它们的验收不在运行结果里。**用错工具比不用工具更糟。**
+
+## 第 1 步：分流（先算流程税）
 
 | 输入长什么样 | 档 | 走哪些级 |
 |---|---|---|
@@ -39,7 +72,7 @@ metadata:
 - T1 **只走** 5 问，不逐项走 17 项横切面。这是刻意的减配，不是遗漏
 - T1 的唯一硬要求是：**最大歧义必须在动手前解掉**，因为那是唯一会让你做错东西的地方
 
-## 第 1 步：L1 立项展开（六件套）
+## 第 2 步：L1 立项展开（六件套）
 
 产出 `docs/frame/<slug>.md`。**本轮禁止输出任务列表、文件路径、实现步骤、代码。**
 
@@ -54,13 +87,13 @@ metadata:
 
 **自检**：如果横切面 17 项全都"很重要"，说明在写套话。真实系统里一定有若干项应当判"不适用"。
 
-## 第 2 步：人审与收缩
+## 第 3 步：人审与收缩
 
 交给用户，只要他做四件事：划掉不适用的、纠正 `[推断]`、回答 5 问、选规模。
 
-**在用户回复前不要进第 3 步。** 这一步的产出是"签字"，不是"同意"。
+**在用户回复前不要进第 4 步。** 这一步的产出是"签字"，不是"同意"。
 
-## 第 3–7 步：按档位展开
+## 第 4–7 步：按档位展开
 
 先定档，读 `references/modes.md` 的对照表。
 
@@ -99,6 +132,7 @@ metadata:
 
 | 你正在想的 | 现实 |
 |---|---|
+| "这个需求也该走一遍流程" | 先过领域闸门。文档 / 方案 / 活动策划不是本流程的对象 |
 | "先把最容易做的验证一下" | 你冻结错了层。先问它属于哪一级 |
 | "架构等写完再补" | 架构不是细化，它是并行的前提 |
 | "用户已经说清楚了" | 一句话能说清的只有单点修改 |
