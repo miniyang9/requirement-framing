@@ -1,9 +1,9 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Software-engineering only: use when the deliverable is code that must build, run, and be verified by execution — a script, service, tool, agent, or a change to an existing codebase. Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. 用于软件工程类需求的展开与立项梳理；非软件类需求（文档、方案、调研、活动策划）请勿使用。Not for a single obvious edit that one sentence already specifies, and not for non-software deliverables."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说"写代码"。Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.4.0"
+  version: "0.5.0"
   status: draft
 ---
 
@@ -74,21 +74,29 @@ frame 文档顶部必须有 `状态：` 字段。
 
 ## 第 0 步：领域闸门
 
-本 skill 只服务**软件工程**：交付物必须是**代码，且它能构建、运行、被运行结果验证**。
+本 skill 服务**"会重复运行的产物"**：脚本、服务、工具、agent、定时推送、监控、机器人，或对存量代码库的成体系改造。
 
 判据只有一条：
 
-> 交付物是不是"一个能跑起来、并且能用运行结果验证的东西"？
+> 交付物是**会被执行不止一次**的东西，还是**一次性的回答 / 文档**？
 
 | 需求 | 判定 | 动作 |
 |---|---|---|
-| 自动化脚本 / 服务 / 工具 / agent | 是 | 进入第 1 步 |
+| 脚本 / 服务 / 工具 / agent | 是 | 进入第 1 步 |
+| 定时推送 / 每日简报 / 监控 / 机器人 | **是**——哪怕实现只是一条调度器条目，一行代码都不写 | 进入第 1 步 |
 | 成体系地改造存量代码库 | 是 | 进入第 1 步 |
-| 写一份方案 / 调研 / 汇报 / 文章 | **不是** | 退化 |
+| 一次性写个脚本、跑完就丢 | **T1** | 走轻量，但口径仍要先定 |
+| 一次性回答 / 方案 / 调研 / 汇报 / 文章 | **不是** | 退化 |
 | 策划活动、设计流程、组织安排 | **不是** | 退化 |
 | 混合（"做个产品，含技术方案 + 运营方案"） | **部分** | **只对软件部分走流程**，其余回正常沟通；两者不要混在一份文档里 |
 
-**不确定时不要猜**，问一句（一句话，不要列选项）：
+**为什么把"定时推送"也算进来**：它的实现可以只是一个调度器条目，不需要写一行代码——但它**会重复运行**。重复运行意味着任何一处口径含糊，都会每天稳定地产出错的答案，而不是错一次。
+
+**判断时不要看实现形态**（代码 / 调度器 / 表格 / 人工流程），只看：它是不是会反复执行、每次都产出同一个"结论"。
+
+### 不确定时不要猜
+
+问一句（一句话，不要列选项）：
 
 > "这个东西最后要交的是能跑的代码，还是一份文档/方案？"
 
@@ -98,11 +106,11 @@ frame 文档顶部必须有 `状态：` 字段。
 
 - **不**产出 frame 文档、**不**判档位、**不**设门禁、**不**逐项走横切面
 - **仍然**按正常对话澄清目标、给建议、必要时给结构化输出
-- 但要明确说一句："这不是软件工程类需求，我不启用立项展开。"——让用户知道你**选择**了不启用，而不是漏了它
+- 但要明确说一句："这不是重复运行的产物，我不启用立项展开。"——让用户知道你**选择**了不启用，而不是漏了它
 
 ### 为什么闸门放最前面
 
-本流程的成本主要花在"逼你想清楚可验证的东西"上。对一份方案或一次活动策划，这个要求是错位的：它们的验收不在运行结果里。**用错工具比不用工具更糟。**
+本流程的成本主要花在"逼你想清楚可验证的东西"上。对一份方案或一次活动策划，这个要求是错位的：它们的验收不在重复运行结果里。**用错工具比不用工具更糟。**
 
 ## 第 1 步：分流（先算流程税）
 
@@ -133,6 +141,8 @@ frame 文档顶部必须有 `状态：` 字段。
 6. **失败预演** — 三个死法 + 最早信号 + 对策
 
 末尾：**最多 5 个问题**，按"影响 × 不确定度"排序，每题带推荐答案。
+
+**周期产出类**（定时推送 / 日报 / 监控）的五问固定为：**口径**（"最热 / 活跃 / 异常"到底按什么算）+ **数据源与失败告警** + **投递通道** + **时区与触发** + **幂等与重跑**。这五项里，口径永远排第一：它含糊，后面四项做得再好都是每天准时产出错误答案。
 
 **自检**：如果横切面 17 项全都"很重要"，说明在写套话。真实系统里一定有若干项应当判"不适用"。
 
@@ -183,10 +193,12 @@ frame 文档顶部必须有 `状态：` 字段。
 
 | 你正在想的 | 现实 |
 |---|---|
+| "用宿主自带的定时器排一个任务就交差" | 那只是投递方式，不是需求。口径没定，它会每天准时产出错的答案 |
+| "这个公式我随手定一个，透明就行" | 透明 ≠ 用户认可。"最热 / 活跃 / 异常"的定义必须由用户选，不能由发明者定 |
 | "这块和未决问题无关，我先做掉" | 这是最贵的借口。无关性由未签字的人判断，不算数 |
 | "用户在问我问题，说明他在推进" | 提问是在**要答案**，不是给**开工许可** |
 | "文档已经存在了，照着做就行" | 存在 ≠ 已签。上一轮留下的默认是"待签" |
-| "这个需求也该走一遍流程" | 先过领域闸门。文档 / 方案 / 活动策划不是本流程的对象 |
+| "这个需求也该走一遍流程" | 先过领域闸门。一次性回答 / 方案 / 活动策划不是本流程的对象 |
 | "先把最容易做的验证一下" | 你冻结错了层。先问它属于哪一级 |
 | "架构等写完再补" | 架构不是细化，它是并行的前提 |
 | "用户已经说清楚了" | 一句话能说清的只有单点修改 |
