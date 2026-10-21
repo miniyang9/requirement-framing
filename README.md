@@ -56,7 +56,9 @@ requirement-framing/
 │   └── references/
 │       ├── contracts.md      # 六个契约 / 桩 / 单人等价物
 │       └── modes.md          # S/M 判定 + L2–L5 逐级对照
-├── staging/dispatch/         # C 的素材，尚未成 skill，不安装
+├── skills/incremental-delivery/  # C：执行（选片/写/验/收尾），只实现 S 档
+│   └── SKILL.md
+├── staging/dispatch/         # C 的 M 档素材，不安装
 ├── examples/frames/          # 三份完整样例（是案例，不是规格）
 ├── CHANGELOG.md
 ├── LICENSE
@@ -69,7 +71,8 @@ requirement-framing/
 |---|---|
 | L1 立项 | **`requirement-framing`** |
 | L2 架构 · L3 契约 · L4 决策 · L5 骨架 | **`solution-design`** |
-| L6 切片 · L7 派发 | `staging/dispatch/`（尚未成 skill） |
+| 执行：选片 / 写 / 验 / 收尾 | **`incremental-delivery`**（只实现 S 档） |
+| 多写者派发 | 未实现，素材在 `staging/dispatch/` |
 | L6 切片 · L7 派发 · 编码 | 执行流（subagent / workflow / 常规实现） |
 
 **为什么拆**：需求展开和架构设计的**触发时机不同**——"我还没想清楚要做什么" vs "我知道要做什么，不知道该怎么拆"。一个 skill 只有一个 description，混在一起会让两类场景都半准不准。
