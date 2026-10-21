@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (状态：已签) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. 当需求已签字、需要定架构 / 分层 / 模块边界 / 接口契约 / 技术选型 / 第一个垂直切片时使用。Requires a signed frame: 没有已签的 frame 就退回 requirement-framing。Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.1.0"
+  version: "0.1.1"
   status: draft
 ---
 
@@ -44,7 +44,9 @@ metadata:
 | 4 | **哪些是契约？** 会被两个以上单元同时读写的 | 没有唯一写者，谁都能改，改完没人知道 |
 | 5 | **骨架最薄能薄到什么程度？** 薄到只够证伪约定 | 骨架膨胀成半个产品，改不动 |
 
-产出：一页图 + 每问的一句话答案。**一页画不完，说明你没想清，不是画布不够。**
+产出：一页图 + 每问的一句话答案。**一图装不下，说明你没想清，不是画布不够。**
+
+**图必须有一份可重建的源。** `docs/arch/diagrams/<slug>.json` 是唯一源；PNG 嵌进 01，HTML 给交互。手绘的图等于没有图——不能重建、会和正文矛盾、也没人知道哪份是对的。
 
 ## 第 2 步：L3 契约
 
@@ -86,6 +88,7 @@ metadata:
 
 - **唯一写者**：每个契约只有一个写者，其余只读
 - **骨架是验收测试**：跑不通就回 L2/L3，不往下走
+- **图必有源**：没有 JSON 源的 PNG 或手绘都不算产出
 - **看到依赖链 = 缺契约**：如果 B 必须等 A 的真实产出，那 A 的产出本应是冻结物，不是运行时依赖
 
 ## 交棒
@@ -109,9 +112,12 @@ metadata:
 ## 产出物
 
 ```
-docs/arch/01-architecture.md   # 五个问题的答案 + 一页图
-docs/arch/02-contracts.md      # 契约（S 档可直接省略，改用代码类型）
-docs/arch/03-decisions.md      # 一行一条，含否决项
+docs/arch/01-architecture.md    # 五个问题的答案 + 嵌图
+docs/arch/02-contracts.md       # 契约（S 档可直接省略，改用代码类型）
+docs/arch/03-decisions.md       # 一行一条，含否决项
+docs/arch/diagrams/<slug>.json  # 图的唯一源（可 diff）
+docs/arch/diagrams/<slug>.png   # 生成物，嵌进 01
+docs/arch/diagrams/<slug>.html  # 生成物，交互版
 ```
 
 三份都要能独立读懂——它们是 C 的输入。

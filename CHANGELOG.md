@@ -2,6 +2,36 @@
 
 本仓库现在承载两个 skill：`requirement-framing`（A，L1）与 `solution-design`（B，L2–L5）。C（L6–L7）尚未成 skill，素材在 `staging/dispatch/`。
 
+## solution-design 0.1.1 — 2026-10-20
+
+### 图的规则：一份源，两种渲染
+
+起因是一次真实产出：`01-architecture.md` 里手绘的 ASCII 图和后来用 archify 生成的 HTML **成了两份独立的手写表示**，互不引用。方向还是反的——ASCII 是事实源，HTML 是它的复制品，等于**最难维护的那份当源**。
+
+| 角色 | 文件 | 特点 |
+|---|---|---|
+| **唯一源** | `docs/arch/diagrams/<slug>.json` | 4–5 KB 文本，可 diff，带语义类型 |
+| 文档内嵌 | `diagrams/<slug>.png` | 生成物，Markdown 直接显示 |
+| 交互版 | `diagrams/<slug>.html` | 生成物，可点、可缩放、可导出 |
+
+`.archify/` 退回成**运行目录**（证据与截图），产物拷到 `docs/arch/diagrams/`。
+
+### 改动
+
+- 第 1 步产出加一条：**图必须有一份可重建的源**
+- 硬约束加第四条：**图必有源**——没有 JSON 源的 PNG 或手绘都不算产出
+- 产出物清单加 `diagrams/{json,png,html}`
+
+### 判据
+
+> **没有源的图等于手绘。**
+
+手绘的图不能重建、会和正文矛盾，而且没人知道哪份是对的。
+
+### 已知限制
+
+archify 的 `finalize` 需要启动无头浏览器（`browser-check`），在受限沙箱下会 `spawn EPERM`，必须提权一次。另外重跑时产物路径会与上次的 browser 证据冲突，需要换 `--out-dir`。
+
 ## solution-design 0.1.0 — 2026-10-20
 
 从 A 拆出的设计侧 skill。**第一版只做三件事**，按之前的约定不做任务卡与派发。
