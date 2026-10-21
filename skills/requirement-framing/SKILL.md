@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.7.0"
+  version: "0.8.0"
   status: draft
 ---
 
@@ -39,7 +39,7 @@ frame 文档顶部必须有 `状态：`。
 | **待签** | 只读；可写回文档本身 |
 | **已签** | 可以开工 |
 
-三条判据：**文档存在 ≠ 已签**（上一轮留下的默认"待签"）；**用户提问 ≠ 用户批准**；**新答案引入新未知 → 回退"待签"**。
+四条判据：**文档存在 ≠ 已签**（上一轮留下的默认"待签"）；**用户提问 ≠ 用户批准**；**新答案引入新未知 → 回退"待签"**；**执行档没写进文档 = 不能签**。
 
 ## 加载后的第一条回复
 
@@ -81,7 +81,7 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 ## 第 2 步：L1 展开（六件套）
 
-产出 `docs/frame/<slug>.md`，顶部先写 `状态：待答`。**本轮禁止任务列表、文件路径、实现步骤、代码。**
+产出 `docs/frame/<slug>.md`，顶部先写三行：`状态：待答` / `档位：T0·T1·T2` / `执行档：S 或 M（待确认）`。**本轮禁止任务列表、文件路径、实现步骤、代码。**
 
 1. **体量判定** — 分档 + 依据 + 判错一档的后果
 2. **隐含工作包** — 必须做 / 可能要做 / 建议不做；每条标 `[推断]` 或 `[你说过]`
@@ -96,7 +96,9 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 ## 第 3 步：人审与收缩
 
-用户做四件事：划掉不适用的、纠正 `[推断]`、答问、选规模。
+用户做**五件事**：划掉不适用的、纠正 `[推断]`、答问、选规模、**确认执行档**。
+
+**档位和执行档是两个正交维度，不要混。** 档位（T）回答"多大"，执行档（S/M）回答"几个写者、怎么切"。T2 单 agent 很常见；两个人分别做前后端时，小活也可能是 M。判定见 `references/modes.md`。
 
 **收敛前先复述**：把目标压成一句话，问"别人只读这一行，会不会得到同样的结果？"。这比签字便宜，也更难糊弄；不过关就回第 2 步。
 
@@ -134,6 +136,7 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 | 想法 | 现实 |
 |---|---|
 | "这个我不确定，直接问用户吧" | 先判三分类，能查的先查 |
+| "档位定了就够了" | 档位答"多大"，执行档答"几个写者"。两个维度正交，一个都不能少 |
 | "这块和未决问题无关，我先做掉" | 最贵的借口，无关性由未签字的人判断 |
 | "用户在问我问题，说明他在推进" | 提问是在要答案，不是给开工许可 |
 | "文档已经存在了，照着做" | 存在 ≠ 已签 |
