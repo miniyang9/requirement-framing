@@ -59,7 +59,6 @@ requirement-framing/
 ├── skills/incremental-delivery/  # C：执行（选片/写/验/收尾），只实现 S 档
 │   └── SKILL.md
 ├── staging/dispatch/         # C 的 M 档素材，不安装
-├── examples/frames/          # 三份完整样例（是案例，不是规格）
 ├── CHANGELOG.md
 ├── LICENSE
 └── README.md

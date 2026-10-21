@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (状态：已签) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. 当需求已签字、需要定架构 / 分层 / 模块边界 / 接口契约 / 技术选型 / 第一个垂直切片时使用。Requires a signed frame: 没有已签的 frame 就退回 requirement-framing。Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.2.1"
+  version: "0.2.2"
   status: draft
 ---
 
@@ -65,13 +65,30 @@ metadata:
 | 4 | **哪些是契约？** 会被两个以上单元同时读写的 | 没有唯一写者，谁都能改，改完没人知道 |
 | 5 | **骨架最薄能薄到什么程度？** 薄到只够证伪约定 | 骨架膨胀成半个产品，改不动 |
 
-产出：一页图 + 每问的一句话答案。**一图装不下，说明你没想清，不是画布不够。**
+产出：**1–3 张图** + 每问的一句话答案。
+
+### 一图不够，但也不是越多越好
+
+架构不是一个物件，是一组视图——没有哪张图能同时讲清模块、时序和状态。但"多画几张"也不是答案：**每个视图都要维护**。
+
+选定判据只有一条：**这个视图能不能回答"这次最容易出错的那类问题"**。
+
+| 视图 | 什么时候必须要 | archify 类型 |
+|---|---|---|
+| **模块与数据流** | 总是 | `architecture` |
+| **状态机** | 有 ≥3 个显式模式，且转移有条件（村庄/战斗/结算、待答/待签/已签） | `lifecycle` |
+| **时序** | ≥3 个组件异步交互，或有超时/重试语义 | `sequence` |
+| **部署拓扑** | 非单进程，或多机/多端 | `architecture`（换布局） |
+
+**上限 2–3 张。** 图多了不是想清了，是没决定该看哪一个。每个视图各一份 JSON 源、同一个渲染器。
+
+**反例**：只有一条串行流水线、失败模式都是"卡住"的系统（比如每日简报），一张数据流图就够——再加状态机图是重复。反过来，游戏自动化那种"多模式 + 转移有条件 + 点击有超时"的系统，**状态机和时序都是必需的**，只有数据流图会漏掉最容易出错的那部分。
 
 **图必须有一份可重建的路径 = 源 + 渲染器 + 命令。**
 
-- **源**：`docs/arch/diagrams/<slug>.json`（可 diff）
-- **渲染器**：`docs/arch/diagrams/render.*` 或一条写明的命令——**不许放 `.tmp/`**（那是给一次性探针的）
-- **产物**：`<slug>.png` 嵌进 01，`<slug>.html` 给交互
+- **源**：`docs/arch/diagrams/<slug>/<view>.json`（每视图一份，可 diff）
+- **渲染器**：`docs/arch/diagrams/<slug>/render.*` 或一条写明的命令——**不许放 `.tmp/`**（那是给一次性探针的）
+- **产物**：`<view>.png` 嵌进 01，`<view>.html` 给交互
 
 缺一样都不算"有源"。手绘的图等于没有图——不能重建、会和正文矛盾、也没人知道哪份是对的。
 
@@ -89,7 +106,17 @@ metadata:
 - **S 档写成代码里的类型**（编译器替你守）；**M 档写成文档 + 版本号**（没人替你守了）
 - **冻结时机**：第一个消费者要开工之前，不是"设计全部完成之后"
 
-**02 不退役，只降级**：落地后「形状」一节改成一页指针（→ 代码位置），「约定」一节永久保留——**唯一写者、不变量、冻结理由、错误码映射，这些代码表达不了。**
+**02 从第一天就写成索引，不写字段。** 每个契约一行，形状那一栏本来就是一个指针：
+
+| 契约 | 形状 | 唯一写者 | 冻结理由 |
+|---|---|---|---|
+| `Repo` | 待落地 → `core/models.py` | Fetcher（两实现互斥） | 流水线入口形状 |
+
+落地时只改一格：`待落地` → `已落地 → core/models.py:31`。
+
+**没有"某天把 02 改写成指针"这个动作**——那种任务一定会忘，而且没人负责检测"落地"这个时刻。谁改：执行阶段每片收尾时（C 的职责，它才知道代码落在哪）。
+
+代码表达不了的——**唯一写者、不变量、冻结理由、错误码映射**——永久留在 02。
 
 六个常见契约、桩的要求、单人档等价物：读 `references/contracts.md`。
 
@@ -177,10 +204,10 @@ metadata:
 docs/arch/01-architecture.md    # 五个问题的答案 + 嵌图
 docs/arch/02-contracts.md       # 契约索引：形状（落地后指向代码）+ 约定（永久）
 docs/arch/03-decisions.md       # 一行一条，带编号与否决项
-docs/arch/diagrams/<slug>.json  # 图的源（可 diff）
-docs/arch/diagrams/render.*     # 渲染器（不许放 .tmp）
-docs/arch/diagrams/<slug>.png   # 生成物，嵌进 01
-docs/arch/diagrams/<slug>.html  # 生成物，交互版
+docs/arch/diagrams/<slug>/<view>.json  # 每个视图一份源（可 diff）
+docs/arch/diagrams/<slug>/render.*     # 渲染器（不许放 .tmp）
+docs/arch/diagrams/<slug>/<view>.png   # 生成物，嵌进 01
+docs/arch/diagrams/<slug>/<view>.html  # 生成物，交互版
 ```
 
 三份都要能独立读懂——它们是 C 的输入。

@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. 当设计三件套已完成、要开始或继续按片实现时使用。Solo (single writer) is implemented; multi-writer dispatch is not. 缺设计三件套就退回 solution-design。"
 license: MIT
 metadata:
-  version: "0.1.0"
+  version: "0.1.1"
   status: draft
 ---
 
@@ -81,6 +81,8 @@ metadata:
 
 **返工理由是硬字段。** 没有它，三个月后你不知道偏差通常发生在哪一跳。
 
+**本片让哪个契约落地了？** 有 → 去 `02-contracts.md` 把那一行的 `待落地` 改成 `已落地 → 文件:行`。这是唯一需要动设计文档的时刻，别攒着——攒着就一定会忘。
+
 S 档的 review 就在这一步：把产物 + 验收结果交给一个**干净会话**，只问"满足规格吗？哪里不对？"
 
 ### 5 收敛判定
@@ -89,6 +91,7 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**干净�
 
 - 每问都有对应代码 + 验收证据？
 - 02 的每个契约都有唯一写者，且代码里属实？
+- **02 里的 `待落地` 是否都已变成 `已落地 → 文件:行`？**（指针过期 = 文档在说谎）
 - 01 的"不做"清单，一条都没被违反？
 
 缺口 → 回 B 补设计（不回 A，也不就地改）。
