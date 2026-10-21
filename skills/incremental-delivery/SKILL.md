@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. 当设计三件套已完成、要开始或继续按片实现时使用。Solo (single writer) is implemented; multi-writer dispatch is not. 缺设计三件套就退回 solution-design。"
 license: MIT
 metadata:
-  version: "0.1.1"
+  version: "0.1.2"
   status: draft
 ---
 
@@ -17,12 +17,10 @@ metadata:
 ## 门禁：三件齐 + 已冻 + 复核档位
 
 1. `docs/arch/` 下 01 / 02 / 03 齐
-2. 02 里写了冻结声明（"第一片开工之前"这类）
-3. **复核执行档**：01 写的是 S 还是 M？现在实际有几个写者？
+2. 02 开头有冻结行：`冻结：<日期>    冻结人：<角色>`
+3. **复核执行档**：读 **frame 头部的 `执行档`**（执行档只有一个来源，不读 01），再看现在实际有几个写者。
 
-第三条第判据：
-
-| 实际情况 | 01 写的是 | 动作 |
+| 实际情况 | frame 写的是 | 动作 |
 |---|---|---|
 | 一个写者 | S | 继续 |
 | 多个写者 | M | 本版不支持 → **停**，说明 C 的 M 档未实现 |
@@ -53,7 +51,7 @@ metadata:
 
 自己写。三条规矩：
 
-- **不许改契约**——02 里的字段、封闭集合、唯一写者表
+- **不许改契约**——02 里的唯一写者、封闭集合、不变量。**允许**：写实现、加实现内部字段、把 `待落地` 更新成 `已落地 → 文件:行`
 - 契约不足 → **停**，记一笔，回 B；不许就地扩字段
 - 不许"顺手"加 01 里"不做"清单上的东西
 
@@ -74,6 +72,7 @@ metadata:
 做了：
 没做：
 下次：
+证据：<跑过的命令 / fixture / 日志字段，一行结果>
 返工：无 / <七类之一 + 一句话>
 ```
 
@@ -85,6 +84,8 @@ metadata:
 
 S 档的 review 就在这一步：把产物 + 验收结果交给一个**干净会话**，只问"满足规格吗？哪里不对？"
 
+**顺序是 review → 台账，不是反过来。** 反过来，台账记的是"我做了什么"，而不是"别人验过什么"。review 的结论和证据写进那一行 `证据：`。
+
 ### 5 收敛判定
 
 对照 01 的五个问题逐条打勾：
@@ -95,6 +96,16 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**干净�
 - 01 的"不做"清单，一条都没被违反？
 
 缺口 → 回 B 补设计（不回 A，也不就地改）。
+
+四问全过 → 在台账末尾写一节，**宣布交付**：
+
+```
+## 交付 · <日期>
+范围：<frame 的范围方案>
+未做：<明确列出的没做项，没有就写 无>
+```
+
+**没有这一节，就没有"完成"这个状态**——所有参与方都不知道该停在哪。
 
 ## S / M 差异
 
@@ -111,7 +122,7 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**干净�
 
 ## 铁律
 
-- **执行中不改设计。** 缺口回 B；需求变了回 A。
+- **执行中不改「约定」，只更新「指针」。** 唯一写者 / 封闭集合 / 不变量——不许动；`待落地 → 已落地`——每片必更。缺口回 B；需求变了回 A。
 - **一次一片。** 两片并行，等于两片都没验。
 - **收尾必写返工理由。** 没有返工也要写"无"。
 
