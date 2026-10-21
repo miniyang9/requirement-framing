@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Scope: 只负责立项、提问、签字与交接块；架构设计、契约冻结、任务派发交棒给下游。Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.10.0"
+  version: "0.10.1"
   status: draft
 ---
 
@@ -106,11 +106,25 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 1. **体量判定** — 分档 + 依据 + 判错一档的后果
 2. **隐含工作包** — 必须做 / 可能要做 / 建议不做；每条标 `[推断]` 或 `[你说过]`
 3. **两遍扫描** — 先层（17 项）再角色（5 个），读 `references/cross-sections.md`；每项给 已有 / 待定（取决于什么）/ 不适用（为什么）/ **不做（理由 + 谁砍的）**
-4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价，按晚定代价降序。**决策点 = 问题池；提问 = 从池里按"影响 × 不确定度"取前 5 个**
+4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价 / **连带约束（推论）**，按晚定代价降序。**决策点 = 问题池；提问 = 从池里按"影响 × 不确定度"取前 5 个**
 5. **三种范围方案** — 最小 / 正规 / 平台化，各自**放弃什么、锁死什么**
 6. **失败预演** — 三个死法 + 最早信号 + 对策
 
 **提问前先读 `references/questioning.md`**：三分类决定问谁、一次只问一题、每题带立场明确的建议答案。最多 5 题。
+
+### 推论比决策更容易被漏
+
+每个已定的决策，都要写它的**连带约束**——你拍板的是决策，不是它的后果。
+
+| 层 | 例 | 谁负责 |
+|---|---|---|
+| 决策 | 通道 = 微信 | L1，用户拍板 |
+| **推论** | 微信 = 服务号模板消息 = **放不下 1.5 KB 正文，必须挂外链** | **L1 要记下来** |
+| 后果 | 需要公网页面 + 素材上传，是一个独立工程量 | L2 据此设计 |
+
+用户拍板"微信"时，并没有拍板"挂外链"；下游若不知道这条，就会按"微信能发长文"去设计。
+
+**推论不是需求，是需求的后果。** 它写在决策点表那一行里，界面上不重复成一段文字。
 
 自检：17 项全判"很重要" = 在写套话。真实系统里一定有若干项应当判"不适用"。
 
@@ -124,13 +138,22 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 用户回复后：改 `状态：` 并回写文档。**不是"已签"不进第 4 步。**
 
-## 第 4 步：产出交接块
+## 第 4 步：产出交接块（仅在跨上下文边界时）
 
-签字之后，另写一页 `docs/frame/<slug>.handoff.md`。**它是 L1 的唯一出口，也是下游唯一要读的东西。**
+**触发条件**：要跨 session 继续，或上下文将满。同一次会话里接着做 L2 时**不写**——那些信息 frame 里已经有了。
 
-必填七项：`范围` · `验收` · `三轴` · `已冻结` · `必须回答的设计问题` · `留给下游决定的` · `引用`。
+跨边界时，另写一页 `docs/frame/<slug>.handoff.md`。它的定位是**承重事实与落点的载体，不是需求摘要**：
 
-模板、三条纪律、以及"不合格的交接块长什么样"，读 `references/handoff.md`。
+| 必填 | 内容 |
+|---|---|
+| **目标** | 一句话；细节不重复 |
+| **承重事实** | 已定决策的**推论**——改了就会毁掉设计的约束，每条带锚点 |
+| **分诊** | 已冻结 / 必须回答 / 留给你 / 明确不做，每条带 `§` 定位 |
+| **未决** | 还没定的，以及"我按推荐取了默认"的 |
+
+范围、验收、三轴**不复述**——它们在 frame 里，下游会读。模板与反例见 `references/handoff.md`。
+
+**同 session 的替代**：只把"承重事实"一节贴到 frame 末尾即可，不必另开文件。
 
 ## 第 5 步：交棒
 
@@ -165,7 +188,7 @@ B（`solution-design`）尚未建成；它的素材暂存仓库 `staging/solutio
 
 ```
 docs/frame/<slug>.md           # L1 六件套（顶部带 状态：）
-docs/frame/<slug>.handoff.md   # 交接块（15 行以内）
+docs/frame/<slug>.handoff.md   # 交接块（仅跨上下文边界时；15 行以内）
 ```
 
 只有这两个。`docs/arch/` 及其后的产物归下游。
