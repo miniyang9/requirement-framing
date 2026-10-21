@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.11.3"
+  version: "0.11.4"
   status: draft
 ---
 # Requirement Framing
@@ -54,13 +54,19 @@ frame 文档顶部必须有 `状态：`。
 6. **新未知先分类**：用户决策 → 重开问题、状态回退"待签"；待查事实（探针能查）→ 写成 §0 承重事实，**不卡签字**
 7. **改选推荐项要全量回写**——改了某题就重写所有受影响段落再改状态；只改决策点那一行，等于留下两套事实
 
-## 加载后的第一条回复
+## 第一条回复：在你第一个对外动作之前
+
+在你**第一次向用户提问**、或**第一次写任何文件**之前，先输出这三行：
 
 ```
 体量档：T0 / T1 / T2 / 待定（缺：<什么才能定>）
 未决：Q1 …／Q2 …（没有写"无"；第一条常常就是知识缺口——项目在哪、哪个模块）
 承诺：在收到这些回答前，我不会创建任何文件。
 ```
+
+**绑定的是动作，不是"第几条消息"。** 只读探查（读文件、列目录、grep）不算对外动作，可以先读再报——那时"待定"可能已经变成具体档位，更好。
+
+**但没有这三行就提问，等于没报。** 尤其是用工具直接问用户（`ask_user_question` 这类）：**那三行必须写在发起它的同一轮文本里**。只弹出一张问题卡片、没有文本，用户看不到你在等什么、也不会有"承诺"这件事。
 
 ## 第 0 步：领域闸门
 
