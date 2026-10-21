@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.11.5"
+  version: "0.12.0"
   status: draft
 ---
 # Requirement Framing
@@ -15,7 +15,7 @@ metadata:
 ## 三条信条
 
 1. **输入是种子，不是规格。** 那几句话说的是"什么事、大概什么形状"，不是可验证的东西。默认动作不是补全它，而是展开它。
-2. **先展开，后提问。** 先走清单把"你知道但用户没说"的倒出来，再只问自己判断不了的。先问问题，等于让用户替你做功课。
+2. **先展开，后提问。** 先走清单把"你知道但用户没说"的展开出来，再只问自己判断不了的。先问问题，等于让用户替你做功课。
 3. **展开的产物在形态上不能是任务列表。** 只要产物是列表，就会一路收敛到底。
 
 ## 门禁（HARD-GATE）
@@ -68,7 +68,7 @@ frame 文档顶部必须有 `状态：`。
 
 **但没有这三行就提问，等于没报。** 尤其是用工具直接问用户（`ask_user_question` 这类）：**那三行必须写在发起它的同一轮文本里**。只弹出一张问题卡片、没有文本，用户看不到你在等什么、也不会有"承诺"这件事。
 
-## 第 0 步：领域闸门
+## 第 0 步：领域判定
 
 只服务**会重复运行的产物**。判据：它会被执行不止一次，还是一次性回答？
 
@@ -109,7 +109,7 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 **T1 减配的是展开量，不是授权。** 它照样产出 `docs/frame/<slug>.md`，照样要有 `状态：已签`，只是内容从六件套缩到五问、不写 §0。
 
-**不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以必须**写进 frame 头部**、随签字一并确认。没有 frame 的降档 = 越线。
+**不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以必须**写进 frame 头部**、随签字一并确认。没有 frame 的降档 = 越权。
 
 ### 三个轴，别混
 
@@ -149,32 +149,7 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 **提问前先读 `references/questioning.md`**：三分类决定问谁、一次只问一题、每题带立场明确的建议答案。最多 5 题。
 
-### 推论比决策更容易被漏
-
-拍板的是**决策**，不是它的**后果**。例：决策 =「通道用微信」；推论 =「服务号模板消息装不下 1.5 KB 正文，必须挂外链」。后者用户没拍板过，但下游全受它约束——不知道就会按"微信能发长文"来设计。
-
-**推论不是需求，是需求的后果。** 写在决策点表那一行，**同时在 `## 0. 承重事实` 里用一条短句复述**——那是下游打开 frame 第一眼要看的东西。
-
-**锚点只用 ID，不带章节号。**
-
-```
-F1  ← 来自 D4
-```
-
-`F` 是承重事实、`D` 是决策点，各自从 1 编号。**不要写 `§4 D4`**——章节号会随 frame 结构调整而失效，ID 不会。实测里就有一个 agent 调完章节顺序后 §0 全部锚点指向错位置，靠人工 grep 才修回来。
-
-**每条承重事实都要标来源**，四选一：
-
-| 标注 | 含义 | 要求 |
-|---|---|---|
-| `[你说过]` | 用户原话能指出来 | 引得出原话 |
-| `[推断]` | 你从别的信息推出来的 | — |
-| `[代码]` | 从既有代码里读到的 | **必须带 `文件:行`** |
-| `[外部]` | 网页 / 官方文档 / 条款 / 第三方 README | **必须带出处（URL 或「文档名 §节」）** |
-
-`[代码]` 和 `[外部]` 是最容易漏的两类：**改造已有系统时最强的约束在代码里，从零搭时最强的约束往往在别人的文档里**（比如"服务条款明令禁止自动化"）。不标来源，下游分不清哪条能商量、哪条是既成事实。
-
-允许"前提 → 推论"连写一句（读得通比形式纯更重要）：F1 这种"走上黑盒视觉之后，系统没有控件身份 → 所以每次点击前必须有带置信度的判定"，前半句是前提，后半句才是约束。**判据落在后半句：它必须是一条可执行的约束，不是形容词。**
+> **承重事实、锚点、来源标注怎么写** → 读 `references/provenance.md`。写 §0 之前必读。
 
 ## 第 3 步：人审与收缩
 
