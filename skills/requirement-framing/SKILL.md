@@ -1,9 +1,9 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.11.1"
+  version: "0.11.3"
   status: draft
 ---
 # Requirement Framing
@@ -57,8 +57,8 @@ frame 文档顶部必须有 `状态：`。
 ## 加载后的第一条回复
 
 ```
-体量档：T0 / T1 / T2
-未决：Q1 …／Q2 …（没有写"无"）
+体量档：T0 / T1 / T2 / 待定（缺：<什么才能定>）
+未决：Q1 …／Q2 …（没有写"无"；第一条常常就是知识缺口——项目在哪、哪个模块）
 承诺：在收到这些回答前，我不会创建任何文件。
 ```
 
@@ -91,7 +91,13 @@ frame 文档顶部必须有 `状态：`。
 
 "工程 / 平台"不是判据，只是"通常跨很多单元"的症状。范围收窄（单点修改）是用户已经替你切好的结果，不是第二个判据。
 
-**必须显式输出一行判定**，否则会默认滑向 T2。
+**必须显式输出一行判定或「待定」**，否则会默认滑向 T2。
+
+**允许判成 `待定`。** 在现有代码上改的需求，第一轮通常就是待定——判档要的信息（现有结构有多绕、会被碰到哪些契约）在代码里，不在对话里。
+
+**「待定」必须带缺项**：写清缺什么才能定（"缺：项目位置" / "缺：现有模块划分"）。只写"待定"、不写缺什么，等于没写，而且下一步没法推进。
+
+**「待定」不是新的一档。** 它只表示"我还判不了"，一旦缺口补上就必须落到 T0/T1/T2 之一——它不许一直挂在那里。
 
 T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T1 不逐项走 17 项横切面——这是刻意减配，不是遗漏。
 
@@ -143,6 +149,16 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 **推论不是需求，是需求的后果。** 写在决策点表那一行，**同时在 `## 0. 承重事实` 里列一条带锚点的短句**——那是下游打开 frame 第一眼要看的东西。
 
+**每条承重事实都要标来源**，三选一：
+
+| 标注 | 含义 |
+|---|---|
+| `[你说过]` | 用户原话能指出来 |
+| `[推断]` | 你从别的信息推出来的 |
+| `[代码]` | 从既有代码里读到的，**必须带 `文件:行`** |
+
+第三类是在现有代码上改的需求里最关键的：**最强的约束往往不在用户嘴里，而在代码里**（"这张表已有 300 万行"、"这个接口对外承诺过"）。不标来源，下游分不清哪条能商量、哪条是既成事实。
+
 允许"前提 → 推论"连写一句（读得通比形式纯更重要）：F1 这种"走上黑盒视觉之后，系统没有控件身份 → 所以每次点击前必须有带置信度的判定"，前半句是前提，后半句才是约束。**判据落在后半句：它必须是一条可执行的约束，不是形容词。**
 
 ## 第 3 步：人审与收缩
@@ -174,7 +190,7 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 五条自检：
 
 - [ ] 每条承重事实都是**推论**，不是决策本身（"通道=微信"是决策；"模板消息装不下正文"才是承重事实）
-- [ ] 每条都带锚点（`§4 D4`），不靠印象
+- [ ] 每条都带锚点（`§4 D4`）和来源标注（`[你说过]` / `[推断]` / `[代码]`），不靠印象
 - [ ] "明确不做"的条目带了理由，下游不会把它加回来
 - [ ] 未决项要么清空，要么标了"按推荐取默认，可推翻"
 - [ ] **跨节一致**：§2「可能要做」里的项，§5 某档是否已判"放弃"？§4 改过结论的决策点，§0 的锚点是否还成立？用户的回答是否已回写到 §1–§6？
