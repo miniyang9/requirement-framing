@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (状态：已签) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. 当需求已签字、需要定架构 / 分层 / 模块边界 / 接口契约 / 技术选型 / 第一个垂直切片时使用。Requires a signed frame: 没有已签的 frame 就退回 requirement-framing。Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
   status: draft
 ---
 
@@ -67,7 +67,13 @@ metadata:
 
 产出：一页图 + 每问的一句话答案。**一图装不下，说明你没想清，不是画布不够。**
 
-**图必须有一份可重建的源。** `docs/arch/diagrams/<slug>.json` 是唯一源；PNG 嵌进 01，HTML 给交互。手绘的图等于没有图——不能重建、会和正文矛盾、也没人知道哪份是对的。
+**图必须有一份可重建的路径 = 源 + 渲染器 + 命令。**
+
+- **源**：`docs/arch/diagrams/<slug>.json`（可 diff）
+- **渲染器**：`docs/arch/diagrams/render.*` 或一条写明的命令——**不许放 `.tmp/`**（那是给一次性探针的）
+- **产物**：`<slug>.png` 嵌进 01，`<slug>.html` 给交互
+
+缺一样都不算"有源"。手绘的图等于没有图——不能重建、会和正文矛盾、也没人知道哪份是对的。
 
 ## 第 2 步：L3 契约
 
@@ -75,17 +81,23 @@ metadata:
 
 > **会被两个以上单元同时读写的东西，必须是契约；其余不该是。**
 
+**先把两个词分开**：*契约*是那份约定，*契约文档*是记录它的文件。**S 档照样要定契约**，只是契约长在代码里——不是"不需要定义"。
+
 三条硬规矩：
 
 - **每个契约一个唯一写者**，其余只读——这是唯一能防"热心地各自改接口"的结构性手段
-- **S 档写成代码里的类型**（文档会腐坏，类型被强制）；**M 档写成文档 + 版本号**
+- **S 档写成代码里的类型**（编译器替你守）；**M 档写成文档 + 版本号**（没人替你守了）
 - **冻结时机**：第一个消费者要开工之前，不是"设计全部完成之后"
+
+**02 不退役，只降级**：落地后「形状」一节改成一页指针（→ 代码位置），「约定」一节永久保留——**唯一写者、不变量、冻结理由、错误码映射，这些代码表达不了。**
 
 六个常见契约、桩的要求、单人档等价物：读 `references/contracts.md`。
 
 ## 第 3 步：L4 决策记录
 
-一行一条，四列：`日期 / 决定 / 理由 / 否决了什么`。
+一行一条，**五列**：`编号 / 日期 / 决定 / 理由 / 否决了什么`。
+
+**编号是硬要求**：没有编号，"只增不删"就落不了地——被推翻时你没法写"推翻 ADR-07"。
 
 **"否决了什么"不能省**——它挡住的是六周后你自己把已否掉的方案重新提出来。
 
@@ -109,7 +121,7 @@ metadata:
 
 - **唯一写者**：每个契约只有一个写者，其余只读
 - **骨架是验收测试**：跑不通就回 L2/L3，不往下走
-- **图必有源**：没有 JSON 源的 PNG 或手绘都不算产出
+- **图必有重建路径**：源 + 渲染器 + 命令，缺一样都不算产出
 - **看到依赖链 = 缺契约**：如果后一步必须等前一步的真实产出，那前一步的产出本应是冻结物，不是运行时依赖
 
 ## 交棒
@@ -147,13 +159,26 @@ metadata:
 - **决策只增不删。** 删了就没人知道曾经否决过什么，六周后会重开。
 - **图的改动只走 JSON。** PNG / HTML 是产物，手改等于制造第二份真相。
 
+## 交付前三查
+
+三份文档之间最容易互相打脸，交之前对一遍：
+
+| 查什么 | 对不上意味着 |
+|---|---|
+| 01 的契约清单 vs 02 的唯一写者表 | 有一个契约没人写，或有两个写者 |
+| 02 的字段 / 封闭集合 vs 03 的相关决策 | 决策说改了，文档没跟上 |
+| 03 的否决项 vs 01 的「不做」清单 | 被否决的方案又出现在设计里 |
+
+**任何一条对不上，先修再交。** 三份互相矛盾的文档，比只有一份更糟——下游不知道该信哪个。
+
 ## 产出物
 
 ```
 docs/arch/01-architecture.md    # 五个问题的答案 + 嵌图
-docs/arch/02-contracts.md       # 契约（S 档可直接省略，改用代码类型）
-docs/arch/03-decisions.md       # 一行一条，含否决项
-docs/arch/diagrams/<slug>.json  # 图的唯一源（可 diff）
+docs/arch/02-contracts.md       # 契约索引：形状（落地后指向代码）+ 约定（永久）
+docs/arch/03-decisions.md       # 一行一条，带编号与否决项
+docs/arch/diagrams/<slug>.json  # 图的源（可 diff）
+docs/arch/diagrams/render.*     # 渲染器（不许放 .tmp）
 docs/arch/diagrams/<slug>.png   # 生成物，嵌进 01
 docs/arch/diagrams/<slug>.html  # 生成物，交互版
 ```
