@@ -1,46 +1,46 @@
-# 契约细节（L3）
+# Contract details (L3)
 
-## 六个常见契约（示例，不是教条）
+## Six common contracts (examples, not doctrine)
 
-| 契约 | 定义者 | 消费者 | 关键内容 |
+| Contract | Defined by | Consumed by | Key content |
 |---|---|---|---|
-| 世界/领域快照 | 架构 | 所有读状态的模块 | 状态 ID、关键量、可用动作、置信度 |
-| 状态/术语词表 | 架构 | 识别层、控制层 | **封闭集合** + 互斥规则 |
-| 动作/命令原语 | 架构 | 控制层、执行层 | 原语集合 + 超时语义 |
-| 资产/配置格式 | 识别层 | 消费方、热更新 | 版本、阈值、组织方式 |
-| 事件/日志 | 架构 | 全部 | 结构化 schema |
-| 参数 schema | 架构 | 决策层、运维 | 参数、默认值、单位 |
+| World / domain snapshot | architecture | every module that reads state | state ID, key quantities, available actions, confidence |
+| State / vocabulary | architecture | recognition, control | **closed set** + mutual-exclusion rules |
+| Action / command primitives | architecture | control, execution | primitive set + timeout semantics |
+| Asset / config format | recognition | consumers, hot reload | version, thresholds, organization |
+| Event / log | architecture | everything | structured schema |
+| Parameter schema | architecture | policy, operations | parameters, defaults, units |
 
-**"封闭集合"是重点**：词表必须是一个能被签字确认的有限列表。不封闭，并行单元各自往里加，最后没人知道全集。
+**"Closed set" is the point**: the vocabulary must be a finite list a signature can confirm. Leave it open and parallel units each add to it, until nobody knows the whole set.
 
-**每个契约必须有唯一写者。** 这是唯一能防止"热心地各自改接口"的结构性手段。
+**Every contract needs exactly one writer.** It is the only structural defence against "eagerly rewriting each other's interfaces".
 
-编号少不等于省事：n 个单元靠两两协商是 **n(n−1)/2** 次，收敛到 k 个共享契约是 **O(n)**，且新单元加入时不用重谈。**找"最小充分共享集"是这一级的全部工作。**
+Fewer contracts is not laziness: n units negotiating pairwise is **n(n−1)/2** conversations; converging on k shared contracts is **O(n)**, and a new unit joins without renegotiating. **Finding the minimal sufficient shared set is the whole job at this level.**
 
-## 桩：契约要可执行，不只是被声明
+## Stubs: a contract must be executable, not merely declared
 
-只冻结文档**仍然会阻塞**。三个条件缺一不可：
+Freezing documents alone **still blocks**. Three conditions, all required:
 
-| 条件 | 缺了会怎样 |
+| Condition | What happens without it |
 |---|---|
-| ① 接口窄（契约数量少） | 协商成本回到平方级 |
-| ② **桩可执行** | 下游仍要等上游真实实现，只是等得更文明 |
-| ③ **每个单元有独立验收夹具** | 无法判断是否完成，只能等集成时发现 |
+| ① Narrow interface (few contracts) | negotiation cost returns to quadratic |
+| ② **An executable stub** | downstream still waits for the real implementation, just more politely |
+| ③ **An independent acceptance fixture per unit** | you cannot tell whether a unit is done until integration |
 
-②③ 才是"不阻塞"的实质：**把"等待别人的产物"换成"对着冻结的桩开发和验收"**。
+② and ③ are the substance of "not blocking": **replace "waiting for someone else's output" with "building and accepting against a frozen stub".**
 
-由此得出可交付单元的定义——**不是"最小工作单元"，而是"最小的、可以被独立验收的单元"**。二者经常差很远。
+Hence the definition of a deliverable unit — **not "the smallest unit of work", but "the smallest unit that can be independently accepted"**. The two are often far apart.
 
-## 单人档的等价物
+## Solo equivalents
 
-单人没有"并行单元"，但有**上下文重置**——每次重置都是一次交接给失忆的继任者。
+A solo worker has no "parallel units", but has **context resets** — and every reset is a handoff to a successor with amnesia.
 
-| M 档概念 | S 档等价物 |
+| M-mode concept | S-mode equivalent |
 |---|---|
-| 契约文档 | **代码里的类型定义**（文档会腐坏，类型被强制） |
-| 桩 | 固定输入夹具 |
-| 任务卡 | 带完成判据的切片（粒度 = 一次上下文） |
-| 两阶段 review | 新上下文复读：把产物交给干净会话，只问"满足规格吗、哪里不对" |
-| 集成 | 每片收尾仪式 |
+| Contract document | **type definitions in code** (documents rot, types are enforced) |
+| Stub | a fixed input fixture |
+| Task card | a slice with a completion criterion (granularity = one context) |
+| Two-stage review | re-reading in a fresh context: hand the artifact to a clean session and ask only "does it meet the spec, what is wrong" |
+| Integration | the per-slice closing ritual |
 
-S 档只需要把**真正被反复碰的 3–4 个**契约写成类型，不必凑满六个。
+S mode only needs the **3–4 contracts that are genuinely touched repeatedly** written as types — no need to fill all six.

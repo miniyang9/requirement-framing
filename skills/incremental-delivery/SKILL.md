@@ -3,142 +3,142 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. 当设计三件套已完成、要开始或继续按片实现时使用。Solo (single writer) is implemented; multi-writer dispatch is not. 缺设计三件套就退回 solution-design。"
 license: MIT
 metadata:
-  version: "0.1.2"
+  version: "0.2.0"
   status: draft
 ---
 
-# Incremental Delivery（执行）
+# Incremental Delivery
 
-上游是 `solution-design`（B），输入是 01 / 02 / 03。
-本 skill 把设计变成**一串能独立验收的增量**，每做完一片落一次账。
+Upstream is `solution-design` (B); the input is 01 / 02 / 03.
+This skill turns the design into **a sequence of independently acceptable increments**, recording one ledger entry per slice finished.
 
-**它不是派发 skill。** 派发只是它在多写者下的一半；本版只实现单人档。
+**It is not a dispatch skill.** Dispatch is only its multi-writer half; this version implements solo mode only.
 
-## 门禁：三件齐 + 已冻 + 复核档位
+## Gate: three documents, frozen, and the mode re-checked
 
-1. `docs/arch/` 下 01 / 02 / 03 齐
-2. 02 开头有冻结行：`冻结：<日期>    冻结人：<角色>`
-3. **复核执行档**：读 **frame 头部的 `执行档`**（执行档只有一个来源，不读 01），再看现在实际有几个写者。
+1. `docs/arch/` holds 01 / 02 / 03
+2. 02 starts with a freeze line: `Frozen: <date>    Frozen by: <role>`
+3. **Re-check the execution mode**: read `Execution mode` **from the frame header** (it has exactly one source; do not read it from 01), then look at how many writers actually exist.
 
-| 实际情况 | frame 写的是 | 动作 |
+| Reality | The frame says | Action |
 |---|---|---|
-| 一个写者 | S | 继续 |
-| 多个写者 | M | 本版不支持 → **停**，说明 C 的 M 档未实现 |
-| 多个写者 | S | **停**，回 `requirement-framing` 改 frame，再重走 B |
-| 一个写者 | M | **停**，同上——不要自己降档 |
+| one writer | S | continue |
+| multiple writers | M | unsupported in this version → **stop**, say C's M mode is unimplemented |
+| multiple writers | S | **stop** — back to `requirement-framing`, fix the frame, then rerun B |
+| one writer | M | **stop** — same as above; never downgrade on your own |
 
-**缺任何一条就退回 B，不要就地开写。** 设计不全时开工，等于把缺口留给未来的自己。
+**Miss any one and go back to B; never start writing in place.** Starting with an incomplete design hands the gap to your future self.
 
-## 核心循环（五步）
-
-```
-选片 → 写 → 验 → 收尾 → 收敛判定
-```
-
-**一轮只做一片。** 做完一片才允许看下一片。
-
-### 1 选片
-
-判据是**"能被独立验收"**，不是"工作量最小"。
-
-- 一片 = **一次上下文能装完**的量；装不下就再切
-- 优先级：先做能证伪设计的（骨架优先），再做补全
-- 若 01 写明 L5 合并进第一片，**第一片就是那个骨架**
-
-不许一次挑两片"顺手一起做"。
-
-### 2 写
-
-自己写。三条规矩：
-
-- **不许改契约**——02 里的唯一写者、封闭集合、不变量。**允许**：写实现、加实现内部字段、把 `待落地` 更新成 `已落地 → 文件:行`
-- 契约不足 → **停**，记一笔，回 B；不许就地扩字段
-- 不许"顺手"加 01 里"不做"清单上的东西
-
-### 3 验
-
-跑 01 / 02 里写明的验收判据，**不是"看起来对"**。
-
-- 有 fixture 的跑 fixture
-- 有命令的跑命令
-- 骨架片：验的是"设计是否成立"，不是"功能是否完整"
-
-### 4 收尾
-
-往 `docs/build/<slug>.md` **追加**：
+## The core loop (five steps)
 
 ```
-## <片名> · <日期>
-做了：
-没做：
-下次：
-证据：<跑过的命令 / fixture / 日志字段，一行结果>
-返工：无 / <七类之一 + 一句话>
+select → build → verify → close → convergence check
 ```
 
-七类：理解 / 假设 / 验收不可测 / 切分丢约束 / 上下文丢失 / 实现跑偏 / **越线（签字前开工）**。
+**One slice per round.** Only after finishing one may you look at the next.
 
-**返工理由是硬字段。** 没有它，三个月后你不知道偏差通常发生在哪一跳。
+### 1 Select
 
-**本片让哪个契约落地了？** 有 → 去 `02-contracts.md` 把那一行的 `待落地` 改成 `已落地 → 文件:行`。这是唯一需要动设计文档的时刻，别攒着——攒着就一定会忘。
+The criterion is **"independently acceptable"**, not "smallest amount of work".
 
-S 档的 review 就在这一步：把产物 + 验收结果交给一个**干净会话**，只问"满足规格吗？哪里不对？"
+- One slice = **as much as one context can hold**; if it does not fit, cut again
+- Priority: whatever can falsify the design first (the skeleton), then completion work
+- If 01 says L5 merges into the first slice, **the first slice is that skeleton**
 
-**顺序是 review → 台账，不是反过来。** 反过来，台账记的是"我做了什么"，而不是"别人验过什么"。review 的结论和证据写进那一行 `证据：`。
+Never pick two slices to "do together while you are at it".
 
-### 5 收敛判定
+### 2 Build
 
-对照 01 的五个问题逐条打勾：
+You write it yourself. Three rules:
 
-- 每问都有对应代码 + 验收证据？
-- 02 的每个契约都有唯一写者，且代码里属实？
-- **02 里的 `待落地` 是否都已变成 `已落地 → 文件:行`？**（指针过期 = 文档在说谎）
-- 01 的"不做"清单，一条都没被违反？
+- **Never change a contract** — the sole writer, closed sets and invariants in 02. **Allowed**: writing the implementation, adding implementation-internal fields, updating `pending` to `landed → file:line`
+- A contract is insufficient → **stop**, note it, go back to B; never widen it in place
+- Never "helpfully" add something on 01's "not doing" list
 
-缺口 → 回 B 补设计（不回 A，也不就地改）。
+### 3 Verify
 
-四问全过 → 在台账末尾写一节，**宣布交付**：
+Run the acceptance criteria written in 01 / 02 — **not "it looks right"**.
+
+- If there is a fixture, run the fixture
+- If there is a command, run the command
+- For a skeleton slice: what is verified is "does the design hold", not "are the features complete"
+
+### 4 Close
+
+**Append** to `docs/build/<slug>.md`:
 
 ```
-## 交付 · <日期>
-范围：<frame 的范围方案>
-未做：<明确列出的没做项，没有就写 无>
+## <slice> · <date>
+done:
+not done:
+next:
+evidence: <command / fixture / log field run, one line of result>
+rework: none / <one of seven classes + one sentence>
 ```
 
-**没有这一节，就没有"完成"这个状态**——所有参与方都不知道该停在哪。
+The seven classes: understanding / assumption / untestable acceptance / slicing lost a constraint / context lost / implementation drifted / **crossed a line (started before signature)**.
 
-## S / M 差异
+**The rework reason is a hard field.** Without it, three months from now you will not know which hop your deviations usually happen at.
 
-| 环节 | S 档（已实现） | M 档（未实现） |
+**Which contract did this slice land?** If any → edit that row in `02-contracts.md` from `pending` to `landed → file:line`. This is the only moment you touch a design document; do not let it accumulate — accumulated, it is always forgotten.
+
+S-mode review lives here: hand the artifact plus the verification result to a **clean session** and ask only "does it meet the spec? what is wrong?"
+
+**The order is review → ledger, never the reverse.** Reversed, the ledger records "what I did" rather than "what someone verified". The review's conclusion and evidence go into that `evidence:` line.
+
+### 5 Convergence check
+
+Tick off 01's five questions one by one:
+
+- Does every question have corresponding code plus acceptance evidence?
+- Does every contract in 02 have a sole writer, and is that true in the code?
+- **Has every `pending` in 02 become `landed → file:line`?** (a stale pointer means the document is lying)
+- Is 01's "not doing" list violated anywhere?
+
+A gap → back to B to patch the design (not to A, and never edited in place).
+
+All four pass → write one section at the end of the ledger and **declare delivery**:
+
+```
+## Delivered · <date>
+scope: <the frame's scope plan>
+not done: <explicit list, or  none>
+```
+
+**Without that section there is no "done" state** — no participant knows where to stop.
+
+## S / M differences
+
+| Step | S mode (implemented) | M mode (not implemented) |
 |---|---|---|
-| 选片 | 一次上下文一片 | 一张任务卡 = 一片 |
-| 写 | 自己写 | 派发：任务卡 + 唯一写者 + 不许改契约 |
-| 验 | 跑验收 | 跑验收 + 契约符合性检查 |
-| review | 干净会话复读 | 两阶段：规格符合性 → 代码质量 |
-| 收尾 | 四行台账 | 四行 + **一次只合一个** |
-| 收敛 | 对照 01 逐条 | 星形 DAG 全绿 + 端到端空壳 |
+| select | one slice per context | one task card per slice |
+| build | you write it | dispatch: task card + sole writer + no contract changes |
+| verify | run acceptance | run acceptance + contract-conformance check |
+| review | re-read in a clean session | two stages: spec conformance → code quality |
+| close | five-line ledger | five lines + **merge only one at a time** |
+| convergence | tick 01 item by item | star DAG all green + end-to-end shell |
 
-**M 档不是"更严格的 S"。** 它多出来的是"多写者之间不打架"的设施（任务卡、契约符合性检查、合并节奏）。单写者用这些是纯开销。
+**M mode is not a stricter S.** What it adds is the apparatus that keeps multiple writers from colliding (task cards, conformance checks, merge rhythm). For a single writer that is pure overhead.
 
-## 铁律
+## Iron rules
 
-- **执行中不改「约定」，只更新「指针」。** 唯一写者 / 封闭集合 / 不变量——不许动；`待落地 → 已落地`——每片必更。缺口回 B；需求变了回 A。
-- **一次一片。** 两片并行，等于两片都没验。
-- **收尾必写返工理由。** 没有返工也要写"无"。
+- **During execution, never change an agreement — only update a pointer.** Sole writer / closed sets / invariants: hands off. `pending → landed`: update every slice. A gap goes back to B; a changed requirement goes back to A.
+- **One slice at a time.** Two in parallel means neither was verified.
+- **Always write the rework reason.** If there was no rework, write "none".
 
-## 产出物
+## Artifact
 
 ```
-docs/build/<slug>.md        # 追加式台账，每片一节
+docs/build/<slug>.md    # append-only ledger, one section per slice
 ```
 
-代码与测试落在 01 的"落盘形状"里写的位置——本 skill 不另定目录结构。
+Code and tests land wherever 01's "on-disk shape" says — this skill defines no directory layout of its own.
 
-## 红旗
+## Red flags
 
-| 你正在想的 | 现实 |
+| What you are thinking | Reality |
 |---|---|
-| "契约差一个字段，先加上再说" | 那就是设计缺口，回 B |
-| "这两片一起做更快" | 两片并行，等于两片都没验 |
-| "跑通了就是验收通过" | 跑通 ≠ 符合规格；对 01 逐条打勾才算 |
-| "返工理由回头再补" | 回头补的都不是理由，是合理化 |
+| "The contract is one field short, I'll just add it" | That is a design gap; go back to B |
+| "Doing these two slices together is faster" | Two in parallel means neither was verified |
+| "It runs, so it passed acceptance" | Running ≠ meeting the spec; only ticking 01 item by item counts |
+| "I'll fill in the rework reason later" | Anything filled in later is not a reason, it is rationalization |

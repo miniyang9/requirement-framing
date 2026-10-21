@@ -1,21 +1,20 @@
-# 红旗自省（L1 侧）
+# Red flags (L1 side)
 
-在被"现在就开始做"的冲动推着走时读这份。左列是你当时的想法，右列是它为什么站不住。
+Read this when the urge to "start building now" is pushing you along. The left column is what you are thinking; the right column is why it does not hold.
 
-| 你正在想的 | 现实 |
+| What you are thinking | Reality |
 |---|---|
-| "这个我不确定，直接问用户吧" | 先判三分类。文件 / 代码 / git 能查到的先查；问一个自己查得到的事，是最快的失信 |
-| "用宿主自带的定时器排一个任务就交差" | 那只是投递方式，不是需求。口径没定，它会每天准时产出错的答案 |
-| "这个公式我随手定一个，透明就行" | 透明 ≠ 用户认可。"最热 / 活跃 / 异常"的定义必须由用户选，不能由发明者定 |
-| "这块和未决问题无关，我先做掉" | 这是最贵的借口。无关性由未签字的人判断，不算数 |
-| "用户在问我问题，说明他在推进" | 提问是在**要答案**，不是给**开工许可** |
-| "文档已经存在了，照着做就行" | 存在 ≠ 已签。上一轮留下的默认是"待签" |
-| "这个需求也该走一遍流程" | 先过领域闸门。一次性回答 / 方案 / 活动策划不是本流程的对象 |
-| "用户已经说清楚了" | 一句话能说清的只有单点修改 |
-| "我先把默认值填上" | 好，但必须**说出来**。没说出口的默认值等于剥夺了用户否决它的机会 |
-| "先给个方案让他看" | 一个方案是替他选；三个方案才是让他选 |
-| "交接块等下游来问再说" | 交接块是本 skill 的出口。出口没写，等于没做完 |
+| "I'm not sure about this, so I'll just ask the user" | Triage first. Check files / code / git for what is already answerable; asking something you could have looked up is the fastest way to lose trust |
+| "Just schedule a task on the host timer and call it done" | That is a delivery mechanism, not a requirement. With the definition unsettled it will produce the wrong answer on time, every day |
+| "I'll pick a formula myself — it's transparent, that's enough" | Transparent ≠ endorsed. The definition of "hot / active / anomalous" must be chosen by the user, not by its inventor |
+| "This part is unrelated to the open questions, I'll do it first" | The most expensive excuse. Unrelatedness is judged by someone who has not signed — it does not count from you |
+| "The user is asking me questions, so they are moving forward" | A question asks for **an answer**, not for **work permission** |
+| "The document already exists, just follow it" | Exists ≠ signed. A leftover from a previous round defaults to "pending" |
+| "This request should go through the process too" | Domain gate first. A one-off answer / plan / event brief is not this process's subject |
+| "The user already explained it clearly" | One sentence only fully specifies a single-point change |
+| "I'll just fill in the defaults" | Fine — but you must **say them out loud**. An unspoken default robs the user of the chance to veto it |
+| "Let me show them one proposal" | One proposal is choosing for them; three proposals is letting them choose |
 
-## 怎么用
+## How to use
 
-不是通读清单，是**在你动笔/动手的前一秒扫一眼左列**，看有没有一条正好是你此刻的念头。有就停下来，按右列走。
+This is not a list to read through. **Glance at the left column one second before you write or act** and see whether one of these is exactly your current thought. If it is, stop, and follow the right column.

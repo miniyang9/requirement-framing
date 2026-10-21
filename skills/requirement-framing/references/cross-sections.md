@@ -1,83 +1,83 @@
-# 横切面清单（17 项）
+# Cross-sections (17 items)
 
-L1 的核心动作。不能自由联想，要**逐项判定**。
+The core move of L1. No free association — **judge every item**.
 
-## 四态判定
+## Four states
 
-| 状态 | 含义 | 要求 |
+| State | Meaning | Requirement |
 |---|---|---|
-| **已有** | 用户说过了，或已有决定 | 指出依据 |
-| **待定** | 需要用户定，或取决于别的决策 | 必须写"取决于什么" |
-| **不适用** | 这个场景根本不存在这一层 | 必须写理由 |
-| **不做** | 存在，但有意砍掉 | 写理由 + 谁砍的 |
+| **present** | the user said it, or it is already decided | cite the basis |
+| **open** | needs the user, or depends on another decision | must state "depends on what" |
+| **not applicable** | this system simply has no such layer | must state why |
+| **not doing** | it exists, but was deliberately cut | state why + who cut it |
 
-**"不适用"和"不做"必须分开。** 不适用永远不会回来；不做会回来——下一轮评审需要知道它是被决定掉的，还是压根不存在。混在一起，等于把"被砍掉的需求"永久删除。
+**"Not applicable" and "not doing" must stay separate.** Not applicable never comes back; not doing does — a later review needs to know which one it was. Merging them deletes a cut requirement permanently.
 
-**不许合并、不许跳过。** 判"不适用 / 不做"的项数由系统性质决定——像游戏自动化这种"几乎每层都成立"的系统，判出两三项就够了；**唯一的套话信号是"零项"，不是"少于三项"。**
+**Never merge, never skip.** How many items end up "not applicable / not doing" depends on the system: a system where almost every layer exists (game automation, say) may only yield two or three. **The only signal of boilerplate is zero items — not fewer than three.**
 
-## 十七项
+## The 17
 
-| # | 层面 | 判定问句（你要能回答的） | 漏了的症状 |
+| # | Layer | Question you must be able to answer | Symptom when missed |
 |---|---|---|---|
-| 1 | 目标 / 非目标 | 完成时什么必须为真？什么明确不在范围内？什么情况算"实现正确但需求失败"？ | 范围蔓延，做了一堆没人要的东西 |
-| 2 | 用户 / 角色 / 权限 | 谁用？有没有角色差异导致同一功能行为不同？ | 后期才发现要权限模型，所有接口返工 |
-| 3 | 领域模型与数据生命周期 | 核心实体是什么？谁产生、保留多久、谁删除？ | 结构定错，返工成本最高的一类 |
-| 4 | 系统边界与外部依赖 | 依赖哪些外部服务？它们失败/变更/限流怎么办？ | 集成点最后才接，发现协议或配额对不上 |
-| 5 | 架构与模块划分 | 分几层？谁负责什么？跨层数据怎么传？ | 结构漂移、循环依赖、第二个人接不了手 |
-| 6 | 关键流程与状态机 | 有哪几个主要状态？哪些转移是合法的？边界态呢？ | 状态散在条件判断里，边界态无人定义 |
-| 7 | 非功能：性能 / 容量 / 并发 | 延迟、吞吐、数据量、并发数各是什么量级？ | 压测或放量时才发现要重构 |
-| 8 | 安全与隐私 / 合规 | 有没有明文禁令？失败的最坏后果是什么？ | 上线前被卡住，且改不动 |
-| 9 | 可观测性 | 出问题时你靠什么判断它在正常工作？ | 坏了查不到，只能猜 |
-| 10 | 部署与环境 | 跑在哪？怎么启动、怎么升级、怎么回滚？ | "在我机器上能跑" |
-| 11 | 数据迁移与兼容 | 有没有存量数据/存量调用方？版本怎么共存？（没有的话，等价物是什么？） | 上线要停机，或旧客户端全挂 |
-| 12 | 错误处理与降级 | 哪些错误可重试、哪些可降级、哪些必须停？ | 一个外部超时，整条链路挂掉 |
-| 13 | 测试策略与验收 | 怎么证明它是对的？能不能重复跑？ | 没有回归网，改一处崩一处 |
-| 14 | 发布 / 灰度 / 回滚 | 先给谁用？出问题怎么收回？ | 出事只能全量回退 |
-| 15 | 成本与资源 | 钱、算力、许可、人的时间，谁在付？ | 账单或预算超了才发现 |
-| 16 | 演进与二期 | 哪些决定会堵死下一期？ | 一期把二期的路封了 |
-| 17 | **可交接性 / 文档** | 三个月后的你（或下一个 agent）能不能只看文档把它跑起来？ | 系统状态依赖某个人的记忆 |
+| 1 | Goals / non-goals | What must be true at the end? What is explicitly out of scope? What counts as "built correctly, need failed"? | Scope creep; a pile nobody asked for |
+| 2 | Users / roles / permissions | Who uses it? Do role differences change behavior of the same feature? | A permission model discovered late; every endpoint reworked |
+| 3 | Domain model and data lifecycle | What are the core entities? Who creates them, how long are they kept, who deletes? | Wrong structure — the most expensive class of rework |
+| 4 | System boundary and external dependencies | Which external services? What happens when they fail, change, or rate-limit? | Integration wired last; protocol or quota does not fit |
+| 5 | Architecture and module split | How many layers? Who owns what? How does data cross layers? | Structural drift, cyclic dependencies, no second person can take over |
+| 6 | Key flows and state machine | Which main states? Which transitions are legal? And the boundary states? | State scattered across conditionals; boundary states undefined |
+| 7 | Non-functional: performance / capacity / concurrency | Order of magnitude for latency, throughput, data volume, concurrency? | Refactor forced at load-test time |
+| 8 | Security, privacy, compliance | Any explicit prohibition? What is the worst outcome of failing? | Blocked before launch, and unchangeable |
+| 9 | Observability | When something breaks, what tells you it is working? | Broken with no way to look — just guessing |
+| 10 | Deployment and environment | Where does it run? How is it started, upgraded, rolled back? | "Works on my machine" |
+| 11 | Data migration and compatibility | Existing data or callers? How do versions coexist? (If none — what is the equivalent?) | Launch needs downtime, or every old client breaks |
+| 12 | Error handling and degradation | Which errors are retryable, degradable, fatal? | One external timeout takes the whole chain down |
+| 13 | Test strategy and acceptance | How do you prove it is right? Can it be re-run? | No regression net; every change breaks something |
+| 14 | Release / canary / rollback | Who gets it first? How do you take it back? | Only a full rollback is possible |
+| 15 | Cost and resources | Money, compute, licenses, human time — who pays? | The bill or the budget surprises you |
+| 16 | Evolution and phase two | Which decisions block the next phase? | Phase one walls off phase two |
+| 17 | **Handover / documentation** | Can you — or the next agent — run it from the docs alone, three months from now? | System state depends on one person's memory |
 
-## 两个最常被漏的
+## The two most often missed
 
-**第 7 项（非功能）** 在"功能描述"里天然不出现，因为用户想的是"能做什么"，不是"多快、多稳、多大"。它是"待定"率最高的一项。
+**#7 (non-functional)** never appears in a feature description: the user is thinking "what it does", not "how fast, how stable, how large". It has the highest "open" rate.
 
-**第 17 项（可交接性）** 最容易被当成"顺便写个文档"。它不是文档工作——**写不出交接文档，说明系统状态还依赖某个人的记忆**。它的读者通常是三个月后的作者本人，所以形态是运维手册（环境准备 / 参数含义 / 故障处置表 / 日志在哪看），不是用户手册。
+**#17 (handover)** gets treated as "write a doc at the end". It is not documentation work — **if you cannot write the handover doc, the system state still depends on someone's memory.** Its reader is usually the author three months later, so the form is a runbook (environment prep / parameter meanings / failure-handling table / where the logs are), not a user manual.
 
-## 第 11 项的迁移技巧
+## The migration trick for #11
 
-很多项目"没有存量数据"，于是这项被判不适用。但先问一句：**这个项目里有没有等价物？**
+Many projects claim "no existing data" and mark this item not applicable. Ask first: **what is the equivalent here?**
 
-- 有外部客户端/调用方 → 就是版本兼容
-- 靠截图/选择器识别界面 → 就是"资产随界面变化失效"
-- 依赖某个第三方数据表 → 就是"数据源随版本更新"
+- External clients or callers → it is version compatibility
+- Interface recognized via screenshots or selectors → it is "assets invalidated when the UI changes"
+- Depends on a third-party data table → it is "source shifts with their version"
 
-**"没有存量数据"往往只是把迁移问题换了个名字，不是消掉了它。**
+**"No existing data" usually renames the migration problem rather than removing it.**
 
-## 第二遍：五角色扫描
+## Second pass: five roles
 
-第一遍按**层**扫，保证"没有整块遗漏"；第二遍按**角色**扫，保证"没有视角遗漏"。两遍都做完才算覆盖。
+The first pass scans **layers**, guaranteeing no whole block is missing; the second scans **roles**, guaranteeing no viewpoint is missing. Both must finish.
 
-层清单回答"系统有哪些面"，角色清单回答"谁会觉得这里不对"。同一件事在两遍里可能各被抓到一次——那不是重复，那是交叉验证。
+The layer list answers "what faces does the system have"; the role list answers "who will think this is wrong". The same thing may be caught once in each pass — that is cross-validation, not duplication.
 
-| 角色 | 他会追着问什么 | 典型产出 |
+| Role | What they keep pressing on | Typical output |
 |---|---|---|
-| **产品 / PM** | 为什么做？给谁？不做会怎样？什么算成功？ | 目标与非目标、优先级、取舍 |
-| **设计 / UX** | 用户看到什么？出错时看到什么？空态、首次使用、加载中？ | 关键流程、错误/空/加载态、文案 |
-| **后端** | 数据从哪来、谁改、并发与一致性、失败怎么恢复？ | 数据模型、边界、错误处理、幂等 |
-| **前端 / 客户端** | 状态放哪？离线怎么办？慢网、重试、多端一致？ | 交互状态、缓存、降级 |
-| **QA** | 怎么证明它对？什么情况一定错？能不能重放？ | 验收用例、回归夹具、边界与负例 |
+| **Product / PM** | Why build it? For whom? What if we don't? What counts as success? | goals and non-goals, priorities, trade-offs |
+| **Design / UX** | What does the user see? What on error? Empty, first-run, loading? | key flows, error/empty/loading states, copy |
+| **Backend** | Where does data come from, who mutates it, concurrency and consistency, how does it recover? | data model, boundaries, error handling, idempotency |
+| **Frontend / client** | Where does state live? What about offline? Slow network, retries, multi-client consistency? | interaction state, caching, degradation |
+| **QA** | How do you prove it right? What is certainly wrong? Can it be replayed? | acceptance cases, regression fixtures, boundaries and negatives |
 
-用法：
+How to use:
 
-1. 每个角色列 3–5 条"这个角色一定会问"的问题，标 `已有 / 待定 / 不适用`
-2. 只保留**会改变实现**的条目，其余合并进 17 项
-3. 两类条目冲突时（例如 UX 要"立刻反馈"、后端要"异步确认"），冲突本身就是决策点，写进决策点清单
+1. For each role list 3–5 questions that role will certainly ask, tagged `present / open / not applicable`
+2. Keep only items that **change the implementation**; fold the rest into the 17
+3. When two items conflict (UX wants instant feedback, backend wants async confirmation), the conflict itself is a decision point — write it into the decision list
 
-## 自检
+## Self-check
 
-两遍都写完，回答这四个问题：
+After both passes, answer four questions:
 
-1. 有几项判了"不适用"？**零项 = 你在写套话。**
-2. 每一处"待定"，有没有写"取决于什么"？没写就是没想清。
-3. 每一处"已有"，能不能指出用户原话？指不出就是你在替他决定。
-4. 五个角色各贡献了至少一条 17 项里没有的东西吗？**一条都没有，说明角色扫描只是把层清单复述了一遍。**
+1. How many items were judged "not applicable"? **Zero means you are writing boilerplate.**
+2. Does every "open" say "depends on what"? If not, you have not thought it through.
+3. Can you cite the user's own words for every "present"? If not, you decided it for them.
+4. Did the five roles contribute at least one thing the 17 did not already contain? **If none did, the role pass just restated the layer list.**

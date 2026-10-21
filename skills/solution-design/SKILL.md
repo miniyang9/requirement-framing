@@ -1,245 +1,245 @@
 ---
 name: solution-design
-description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (状态：已签) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. 当需求已签字、需要定架构 / 分层 / 模块边界 / 接口契约 / 技术选型 / 第一个垂直切片时使用。Requires a signed frame: 没有已签的 frame 就退回 requirement-framing。Not for writing feature code and not for task dispatch."
+description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (Status: signed) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. 当需求已签字、需要定架构 / 分层 / 模块边界 / 接口契约 / 技术选型 / 第一个垂直切片时使用。Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.2.3"
+  version: "0.3.0"
   status: draft
 ---
 
-# Solution Design（L2–L5）
+# Solution Design (L2–L5)
 
-上游是 `requirement-framing`（A），输入是一份**已签的 frame**。
-下游是执行流（C），交给它的是架构、契约、决策记录。
-**本 skill 不写功能代码，不切任务卡。**
+Upstream is `requirement-framing` (A); the input is **a signed frame**.
+Downstream is execution (C), which receives the architecture, the contracts and the decision records.
+**This skill writes no feature code and cuts no task cards.**
 
-## 门禁：先找已签的 frame，再做体检
+## Gate: find the signed frame, then inspect it
 
-1. 找 `docs/frame/*.md`，读顶部 `状态：`
-2. 有多份已签 → **问用户指认**，不要按修改时间猜
-3. 先读 `## 0. 承重事实`，再读全文
+1. Find `docs/frame/*.md`, read the `Status:` line
+2. More than one signed → **ask the user which one**; never guess by modification time
+3. Read `## 0. Load-bearing facts` first, then the whole file
 
-**只有"已签"能进。** 待答 / 待签 → 退回 A，一句话说明，不要就地脑补需求。
+**Only `signed` gets in.** `open` / `pending` → send it back to A with one line; never fill in requirements on the spot.
 
-### frame 体检（四条，缺一退回）
+### Frame inspection (five checks, any miss sends it back)
 
-| # | 检查 | 不过怎么办 |
+| # | Check | If it fails |
 |---|---|---|
-| 1 | `状态：已签` | 退回 A 签字 |
-| 2 | `## 0. 承重事实` 至少一条，且每条带锚点 | 退回 A 补 §0 |
-| 3 | 头部四行齐：`状态` / `体量档` / `范围方案` / `执行档`，且**不带"（待确认）"** | 退回 A 补 |
-| 4 | "不做"的条目带了理由 | 退回 A 补理由 |
-| 5 | **没有未关闭的 `UPSTREAM-xx`** | 先解决，不许带病设计 |
+| 1 | `Status: signed` | back to A for signature |
+| 2 | `## 0. Load-bearing facts` has at least one entry, each anchored | back to A to complete §0 |
+| 3 | All four header lines present: `Status` / `Size tier` / `Scope plan` / `Execution mode`, **and none still says "(to be confirmed)"** | back to A |
+| 4 | Every "not doing" item carries a reason | back to A for the reason |
+| 5 | **No unclosed `UPSTREAM-xx`** | resolve it; never design on top of it |
 
-**手写的 frame 也要过这四条。** "看起来完整"不是通过条件——A 的第 4 步自检是 A 的承诺，不是你的验收；两边各做一次。
+**A hand-written frame must pass the same five checks.** "Looks complete" is not a pass condition — A's Step 4 self-check is A's promise, not your acceptance; both sides do it once.
 
-### 上游异议：发现 A 判错了怎么办
+### Upstream dissent: what to do when A judged wrong
 
-在 L2 你可能会发现上游判定有误（例如实际有两个写者，执行档应为 M）。
+At L2 you may find the upstream ruling is wrong (two writers in practice, so the execution mode should be M).
 
-- **不许改 frame**（那是 A 的产物，签字主体不同）
-- 在 `03-decisions.md` 记一条 `UPSTREAM-01`：哪条判错、依据、建议改成什么
-- **交付时明确告知用户**："这条需要回 `requirement-framing` 重签"
-- 若这条异议会改变 01 的结构（边界、契约数量、顺序）→ **先解决再继续**，不许带病设计
+- **Never edit the frame** (it is A's artifact, signed by a different party)
+- Record `UPSTREAM-01` in `03-decisions.md`: which ruling, the evidence, the suggested correction
+- **Tell the user explicitly on delivery**: "this one needs re-signing in `requirement-framing`"
+- If the dissent would change 01's structure (boundaries, contract count, order) → **resolve it before continuing**; never design on top of it
 
-**没有 frame 时**：不许"先讨论一下架构再说"。哪怕用户直接问"该怎么分层"，也先退回 L1——否则你设计的是一份口头需求的架构。
+**With no frame**: do not "discuss the architecture first". Even if the user asks "how should this be layered", send it back to L1 — otherwise you are designing an architecture for a verbal request.
 
-**例外**：用户明说只是"概念咨询、不入库"，那就当咨询答，不进流程，也不产出 `docs/arch/`。
+**Exception**: if the user says this is conceptual consultation only, never to be recorded, answer as consultation — no process, no `docs/arch/`.
 
-## 三个轴沿用，不重定
+## Reuse the three axes; never redefine them
 
-体量档、范围方案、执行档在 L1 已经定了。这里只**消费**：
+Size tier, scope plan and execution mode were settled at L1. Here you only **consume** them:
 
-- **执行档**决定后面几级取哪一列（S：一页图 / 类型；M：分层文档 / 契约版本）
-- **体量档**决定要不要全走（T1 通常不需要本 skill）
-- 想改任何一个轴 → 回 A 改 frame，不要在这里偷偷调整
+- **Execution mode** decides which column the later levels take (S: 1–3 views / code types; M: layered documents / contract versions)
+- **Size tier** decides how much to run (T1 usually runs only part of this skill)
+- Want to change an axis → go back to A and change the frame; never adjust it quietly here
 
-## 第 1 步：L2 架构 —— 五个问题
+## Step 1: L2 architecture — five questions
 
-每个都要给"你选了哪个、为什么"，不写教程。
+Each answer states **which option you chose and why**. No tutorials.
 
-| # | 问题 | 定不了会怎样 |
+| # | Question | What breaks if it is unsettled |
 |---|---|---|
-| 1 | **边界按什么切？** 变更频率 / 数据所有权 / 团队，选一个主判据 | 会按"文件类型"切，然后每个需求都横跨所有模块 |
-| 2 | **跨层数据只有一种形状吗？**（世界快照 / 事件 / 模型） | 每层各造一套，接起来时才发现一直在翻译 |
-| 3 | **失败在哪一层被隔离？** 一个外部超时能打穿到哪 | 一个第三方抖动，整条链路停摆 |
-| 4 | **哪些是契约？** 会被两个以上单元同时读写的 | 没有唯一写者，谁都能改，改完没人知道 |
-| 5 | **骨架最薄能薄到什么程度？** 薄到只够证伪约定 | 骨架膨胀成半个产品，改不动 |
+| 1 | **What is the boundary cut along?** Rate of change / data ownership / team — pick one primary criterion | You cut by file type, and every requirement then spans every module |
+| 2 | **Is there exactly one shape of cross-layer data?** (world snapshot / event / model) | Each layer invents its own; the seam turns out to be a translation layer |
+| 3 | **At which layer is failure isolated?** How far can one external timeout pierce | One third-party hiccup stalls the whole chain |
+| 4 | **What are the contracts?** Anything two or more units read and write | No single writer; anyone edits it and nobody notices |
+| 5 | **How thin can the skeleton be?** Thin enough only to falsify the contracts | The skeleton swells into half a product and cannot be changed |
 
-产出：**1–3 张图** + 每问的一句话答案。
+Output: **1–3 diagrams** plus one sentence per question.
 
-### 一图不够，但也不是越多越好
+### One diagram is not enough — but more is not better either
 
-架构不是一个物件，是一组视图——没有哪张图能同时讲清模块、时序和状态。但"多画几张"也不是答案：**每个视图都要维护**。
+Architecture is not an object; it is a set of views. No single diagram explains modules, timing and state at once. But "draw more" is not the answer either: **every view has to be maintained**.
 
-选定判据只有一条：**这个视图能不能回答"这次最容易出错的那类问题"**。
+The only selection criterion: **can this view answer the kind of question that is most likely to go wrong this time?**
 
-| 视图 | 什么时候必须要 | archify 类型 |
+| View | Required when | archify type |
 |---|---|---|
-| **模块与数据流** | 总是 | `architecture` |
-| **状态机** | 有 ≥3 个显式模式，且转移有条件（村庄/战斗/结算、待答/待签/已签） | `lifecycle` |
-| **时序** | ≥3 个组件异步交互，或有超时/重试语义 | `sequence` |
-| **部署拓扑** | 非单进程，或多机/多端 | `architecture`（换布局） |
+| **Modules and data flow** | always | `architecture` |
+| **State machine** | ≥3 explicit modes with conditional transitions (village/battle/result; open/pending/signed) | `lifecycle` |
+| **Sequence** | ≥3 components interacting asynchronously, or timeout/retry semantics | `sequence` |
+| **Deployment topology** | not a single process, or multiple machines/clients | `architecture` (different layout) |
 
-**上限 1–3 张。** 图多了不是想清了，是没决定该看哪一个。每个视图各一份 JSON 源、同一个渲染器。
+**Cap: 1–3.** More diagrams does not mean you thought it through; it means you have not decided what to look at. One JSON source per view, one shared renderer.
 
-**反例**：只有一条串行流水线、失败模式都是"卡住"的系统（比如每日简报），一张数据流图就够——再加状态机图是重复。反过来，游戏自动化那种"多模式 + 转移有条件 + 点击有超时"的系统，**状态机和时序都是必需的**，只有数据流图会漏掉最容易出错的那部分。
+**Counter-example**: a system with one serial pipeline whose failure mode is always "stuck" (a daily digest) needs only a data-flow diagram — adding a state machine duplicates it. Conversely, game automation ("many modes + conditional transitions + clicks that time out") **needs both the state machine and the sequence diagram**; a data-flow diagram alone omits exactly the part most likely to break.
 
-**图必须有一份可重建的路径 = 源 + 渲染器 + 命令。**
+**Every diagram needs a rebuildable path = source + renderer + command.**
 
-- **源**：`docs/arch/diagrams/<slug>/<view>.json`（每视图一份，可 diff）
-- **渲染器**：`docs/arch/diagrams/<slug>/render.*` 或一条写明的命令——**不许放 `.tmp/`**（那是给一次性探针的）
-- **产物**：`<view>.png` 嵌进 01，`<view>.html` 给交互
+- **Source**: `docs/arch/diagrams/<slug>/<view>.json` (one per view, diffable)
+- **Renderer**: `docs/arch/diagrams/<slug>/render.*` or an explicit command — **never under `.tmp/`** (that is for one-off probes)
+- **Outputs**: `<view>.png` embedded in 01, `<view>.html` for interaction
 
-缺一样都不算"有源"。手绘的图等于没有图——不能重建、会和正文矛盾、也没人知道哪份是对的。
+Miss any of the three and you do not have a source. A hand-drawn diagram equals no diagram — it cannot be rebuilt, it will contradict the prose, and nobody knows which one is right.
 
-## 第 2 步：L3 契约
+## Step 2: L3 contracts
 
-判据只有一条：
+One criterion:
 
-> **会被两个以上单元同时读写的东西，必须是契约；其余不该是。**
+> **Anything two or more units read and write together must be a contract; everything else must not be.**
 
-**先把两个词分开**：*契约*是那份约定，*契约文档*是记录它的文件。**S 档照样要定契约**，只是契约长在代码里——不是"不需要定义"。
+**Separate two words first**: a *contract* is the agreement; a *contract document* is the file recording it. **S mode still defines contracts** — they simply live in code. It is not "no definition needed".
 
-三条硬规矩：
+Three hard rules:
 
-- **每个契约一个唯一写者**，其余只读——这是唯一能防"热心地各自改接口"的结构性手段
-- **S 档写成代码里的类型**（编译器替你守）；**M 档写成文档 + 版本号**（没人替你守了）
-- **冻结时机**：第一个消费者要开工之前，不是"设计全部完成之后"
+- **One writer per contract**, everyone else read-only — the only structural defence against "eagerly rewriting each other's interfaces"
+- **S mode: write them as code types** (the compiler guards you); **M mode: documents plus version numbers** (nobody guards you)
+- **Freeze timing**: before the first consumer starts work, not "after the design is complete"
 
-**02 从第一天就写成索引，不写字段。** 文件开头必须先有冻结行：
+**02 is written as an index from day one — no field definitions.** The file must start with a freeze line:
 
 ```
-冻结：<YYYY-MM-DD>    冻结人：<角色>
+Frozen: <YYYY-MM-DD>    Frozen by: <role>
 ```
 
-没有这一行，执行阶段无法判断"能不能开工"。然后每个契约一行，形状那一栏本来就是一个指针：
+Without that line, the execution side cannot tell whether it may start. Then one row per contract, where the shape column is already a pointer:
 
-| 契约 | 形状 | 唯一写者 | 冻结理由 |
+| Contract | Shape | Sole writer | Why frozen |
 |---|---|---|---|
-| `Repo` | 待落地 → `core/models.py` | Fetcher（两实现互斥） | 流水线入口形状 |
+| `Repo` | pending → `core/models.py` | Fetcher (the two implementations are exclusive) | pipeline entry shape |
 
-落地时只改一格：`待落地` → `已落地 → core/models.py:31`。
+On landing you change one cell: `pending` → `landed → core/models.py:31`.
 
-**谁写形状**：实现者在第一次落地时把类型写进代码——**不是 B，也不是契约所有者**。但它必须满足这一行的约束（唯一写者、封闭集合、不变量）；**新增实现内部字段不算改契约**。
+**Who writes the shape**: the implementer, when it first lands, writes the type into code — **not B, and not the contract owner**. But it must satisfy that row's constraints (sole writer, closed set, invariants); **adding an implementation-internal field is not a contract change**.
 
-**没有"某天把 02 改写成指针"这个动作**——那种任务一定会忘，而且没人负责检测"落地"这个时刻。谁改：执行阶段每片收尾时（C 的职责，它才知道代码落在哪）。
+**There is no "one day we rewrite 02 as pointers" action** — that task is always forgotten, and nobody is responsible for detecting the moment of landing. Who does it: the execution side, at each slice's close (C's job; only it knows where the code landed).
 
-代码表达不了的——**唯一写者、不变量、冻结理由、错误码映射**——永久留在 02。
+What code cannot express — **sole writer, invariants, freezing rationale, error-code mapping** — stays in 02 permanently.
 
-六个常见契约、桩的要求、单人档等价物：读 `references/contracts.md`。
+Six common contracts, stub requirements, solo equivalents: read `references/contracts.md`.
 
-## 第 3 步：L4 决策记录
+## Step 3: L4 decision records
 
-一行一条，**五列**：`编号 / 日期 / 决定 / 理由 / 否决了什么`。
+One row per decision, **five columns**: `ID / Date / Decision / Rationale / What was rejected`.
 
-**编号是硬要求**：没有编号，"只增不删"就落不了地——被推翻时你没法写"推翻 ADR-07"。
+**The ID is mandatory**: without it, "append only, never delete" cannot be executed — you cannot write "supersedes ADR-07".
 
-**"否决了什么"不能省**——它挡住的是六周后你自己把已否掉的方案重新提出来。
+**"What was rejected" is not optional** — it stops you, six weeks later, from re-proposing the option you already killed.
 
-不写故事，不写背景铺垫。
+No stories, no background prose.
 
-## 第 4 步：L5 骨架判据
+## Step 4: L5 skeleton criterion
 
-> **骨架是 L2/L3 的验收测试，不是实现的开始。** 产出是"架构是否成立"这个判断，不是功能。
+> **The skeleton is the acceptance test for L2/L3, not the start of implementation.** Its output is the judgement "does this architecture hold", not features.
 
-要不要单独成一级，看**第一个端到端验证点是否昂贵或不可逆**：
+Whether it stands as its own level depends on **how expensive or irreversible the first end-to-end verification point is**:
 
-| 后果成本 | L5 形态 |
+| Cost of being wrong | L5 shape |
 |---|---|
-| 便宜（可重跑、可回滚） | **合并**：L5 与第一片重合，不单独成级 |
-| 中等（有真实副作用但可承受） | **正常**：在真实环境跑一条最薄路径 |
-| 昂贵或不可逆（钱、生产数据、对外承诺） | **前移并换环境**：先在模拟/沙箱里跑，且成为接真实环境的硬门禁 |
+| Cheap (re-runnable, reversible) | **Merged**: L5 coincides with the first slice, no separate level |
+| Moderate (real side effects, survivable) | **Normal**: run the thinnest path in the real environment |
+| Expensive or irreversible (money, production data, external commitments) | **Moved earlier, different environment**: run in a simulation/sandbox first, and make it a hard gate before touching the real environment |
 
-推论：**L5 的位置不固定。** 后果越不可逆，它越靠前——对交易系统，回测骨架几乎排在建契约之前。
+Consequence: **L5's position is not fixed.** The more irreversible the outcome, the earlier it moves — for a trading system, the backtest skeleton sits before the contracts are even drafted.
 
-**01 必须给 L5 和验收各留一节**，否则执行侧无处可读，"验"必然退化成自证：
+**01 must reserve a section for L5 and one for acceptance**, or the execution side has nothing to read and "verify" degrades into self-certification:
 
 ```
-## 骨架（L5）
-S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
+## Skeleton (L5)
+S1 … S4: one line each on what is verified + a pass threshold (number or boolean)
 
-## 验收
-五问各对应什么证据（命令 / fixture / 日志字段）
+## Acceptance
+What evidence each of the five questions maps to (command / fixture / log field)
 ```
 
-**没有这两节，01 不算完成。**
+**Without those two sections, 01 is not complete.**
 
-## 四条硬约束
+## Four hard constraints
 
-- **唯一写者**：每个契约只有一个写者，其余只读
-- **骨架是验收测试**：跑不通就回 L2/L3，不往下走
-- **图必有重建路径**：源 + 渲染器 + 命令，缺一样都不算产出
-- **看到依赖链 = 缺契约**：如果后一步必须等前一步的真实产出，那前一步的产出本应是冻结物，不是运行时依赖
+- **Sole writer**: one writer per contract, everyone else read-only
+- **The skeleton is an acceptance test**: if it does not pass, go back to L2/L3; do not proceed
+- **Every diagram has a rebuild path**: source + renderer + command; miss one and it is not an output
+- **A dependency chain means a missing contract**: if a later step must wait for an earlier one's real output, that output should have been a frozen artifact, not a runtime dependency
 
-## 交棒
+## Handoff
 
-| 级 | 谁做 | 交付物 |
+| Level | Who | Deliverable |
 |---|---|---|
-| L2–L5 | **本 skill** | 架构一页 + 契约 + 决策记录 |
-| 执行（选片 / 写 / 验 / 收尾） | `incremental-delivery`（C） | 每片四行台账 |
-| 多写者派发 | C 的 M 档（**未实现**） | 任务卡 |
+| L2–L5 | **this skill** | architecture page + contracts + decision records |
+| Execution (select / build / verify / close) | `incremental-delivery` (C) | a four-line ledger entry per slice |
+| Multi-writer dispatch | C's M mode (**unimplemented**) | task cards |
 
-**本 skill 不产出任务卡。** 用户要"把它拆成任务"时，说明该进 C 了。
+**This skill produces no task cards.** When the user says "break it into tasks", that is the signal to enter C.
 
-## 设计侧红旗
+## Design-side red flags
 
-| 你正在想的 | 现实 |
+| What you are thinking | Reality |
 |---|---|
-| "架构等写完再补" | 架构不是细化，它是并行的前提 |
-| "这就是几个独立任务" | 那你应该能画出星形 DAG；画不出来就是缺契约 |
-| "先把代码骨架搭起来" | 骨架的产出是判断，不是功能 |
+| "I'll add the architecture once the code is written" | Architecture is not refinement; it is the precondition for parallelism |
+| "This is just a few independent tasks" | Then you can draw a star-shaped DAG; if you cannot, a contract is missing |
+| "Let me scaffold the code first" | The skeleton's output is a judgement, not features |
 
-## 变更传播
+## Change propagation
 
-改一处必须连带改另一处，否则三份文档会互相矛盾。
+Change one thing and you must change the others, or the three documents contradict each other.
 
-| 变了什么 | 必须连带 | 谁记 |
+| What changed | Must also change | Recorded by |
 |---|---|---|
-| frame 的 §0 承重事实 | 01 的五问可能整段作废 | **回 A 重签**，不在 B 就地改 |
-| 01 的边界 / 数据形状 | 02 的契约增删；01 的图重出（改 JSON 再渲染） | B |
-| 02 的契约字段 | 03 记一条；下游的验收夹具 | B |
-| 03 的某条决策被推翻 | **不删旧条**，新增一条写明为何推翻 | B |
-| 执行中发现设计缺口 | 回 B 补 01/02，**不回 A、也不就地改** | C → B |
-| **用户在 L2/L3 期间加需求** | 回 A 改 frame **并重签**；不许在 B 就地扩范围 | A |
+| frame §0 load-bearing facts | the five answers in 01 may be void | **back to A for re-signing**, never edited in B |
+| 01's boundaries / data shapes | contracts added/removed in 02; diagrams re-rendered (edit JSON, re-render) | B |
+| a contract field in 02 | one row in 03; downstream acceptance fixtures | B |
+| a decision in 03 is overturned | **never delete the old row**; add a new one saying why | B |
+| a design gap found during execution | back to B to patch 01/02 — **not to A, and never edited in place** | C → B |
+| **the user adds a requirement during L2/L3** | back to A, edit the frame **and re-sign**; never widen scope in B | A |
 
-两条铁律：
+Two iron rules:
 
-- **决策只增不删。** 删了就没人知道曾经否决过什么，六周后会重开。
-- **图的改动只走 JSON。** PNG / HTML 是产物，手改等于制造第二份真相。
+- **Decisions append, never delete.** Delete them and nobody knows what was once rejected; six weeks later it gets re-proposed.
+- **Diagram changes go through JSON only.** PNG / HTML are outputs; hand-editing them manufactures a second truth.
 
-### 解冻程序
+### Unfreezing procedure
 
-冻结不是单向门，但解冻要付账：
+Freezing is not a one-way door, but unfreezing has a bill:
 
-1. `03` 记一条：谁要求解冻、哪条契约、为什么
-2. 改 `02` 的那一行（保留旧值，加"解冻于 X"）
-3. 通知执行侧：**已经过验收的片，依赖这条契约的必须重验**
+1. Record in `03`: who asked, which contract, why
+2. Edit that row in `02` (keep the old value, add "unfrozen on X")
+3. Notify the execution side: **any slice already accepted that depends on this contract must be re-verified**
 
-没有第 3 步的解冻，等于让已验收的代码和契约悄悄脱钩。
+An unfreeze without step 3 quietly detaches accepted code from its contract.
 
-## 交付前三查
+## Three checks before delivery
 
-三份文档之间最容易互相打脸，交之前对一遍：
+The three documents are the easiest place to contradict yourself. Check before handing over:
 
-| 查什么 | 对不上意味着 |
+| Check | A mismatch means |
 |---|---|
-| 01 的契约清单 vs 02 的唯一写者表 | 有一个契约没人写，或有两个写者 |
-| 02 的字段 / 封闭集合 vs 03 的相关决策 | 决策说改了，文档没跟上 |
-| 03 的否决项 vs 01 的「不做」清单 | 被否决的方案又出现在设计里 |
+| 01's contract list vs 02's sole-writer table | a contract with no writer, or two writers |
+| 02's fields / closed sets vs the relevant decisions in 03 | a decision says it changed, the document did not follow |
+| 03's rejected options vs 01's "not doing" list | a rejected option reappeared in the design |
 
-**任何一条对不上，先修再交。** 三份互相矛盾的文档，比只有一份更糟——下游不知道该信哪个。
+**Any mismatch: fix it before delivery.** Three mutually contradictory documents are worse than one — downstream does not know what to believe.
 
-## 产出物
+## Artifacts
 
 ```
-docs/arch/01-architecture.md    # 五个问题的答案 + 嵌图
-docs/arch/02-contracts.md       # 契约索引：形状（落地后指向代码）+ 约定（永久）
-docs/arch/03-decisions.md       # 一行一条，带编号与否决项
-docs/arch/diagrams/<slug>/<view>.json  # 每个视图一份源（可 diff）
-docs/arch/diagrams/<slug>/render.*     # 渲染器（不许放 .tmp）
-docs/arch/diagrams/<slug>/<view>.png   # 生成物，嵌进 01
-docs/arch/diagrams/<slug>/<view>.html  # 生成物，交互版
+docs/arch/01-architecture.md            # the five answers + embedded diagrams
+docs/arch/02-contracts.md               # contract index: shape (pointers once landed) + agreements (permanent)
+docs/arch/03-decisions.md               # one row each, with ID and rejected options
+docs/arch/diagrams/<slug>/<view>.json   # one source per view (diffable)
+docs/arch/diagrams/<slug>/render.*      # renderer (never under .tmp)
+docs/arch/diagrams/<slug>/<view>.png    # output, embedded in 01
+docs/arch/diagrams/<slug>/<view>.html   # output, interactive
 ```
 
-三份都要能独立读懂——它们是 C 的输入。
+All three must be independently readable — they are C's input.
