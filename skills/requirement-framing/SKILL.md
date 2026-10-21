@@ -1,9 +1,9 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.12.1"
+  version: "0.12.2"
   status: draft
 ---
 # Requirement Framing
@@ -211,6 +211,17 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 **跨 session 不需要额外产物**：下游重新读一遍已签的 frame 就是完整的交接。真正要传的是**状态可判定**（`状态：已签`）和**输入可定位**（slug），不是内容副本。
 
 下游两个 skill 都已存在（`solution-design` / `incremental-delivery`）。**跨 skill 的引用会随上游变更失效**——改了下游的名字或范围，回来同步这张表。
+
+## 被委派时
+
+你可能是个没有用户的 agent（子 agent、workflow 里的一个 executor）。**这不等于不需要 frame。**
+
+- 收到**新需求或范围变更** → 照样走本 skill，产出**待签**的 `docs/frame/<slug>.md`（或一份草稿），交回父 agent
+- **不许自签**，也不许"先把实现做了等签字"
+- 你的交付物是"**一份可签的东西**"，不是一个聪明的建议
+
+判据：**能被签字的产物 > 一个聪明的回答。**
+
 
 ## 产出物
 
