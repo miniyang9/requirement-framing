@@ -42,18 +42,36 @@
 ```
 requirement-framing/
 ├── skills/requirement-framing/
-│   ├── SKILL.md              # 主干：信条 + 门禁 + 闸门 + 分流 + L0–L7 + 铁律
-│   └── references/
+│   ├── SKILL.md              # 主干：信条 + 门禁 + 闸门 + 分流 + L1–L7 骨架 + 指针（8 KB）
+│   └── references/           # 细则，按需读取
+│       ├── questioning.md    # 提问纪律：三分类 / 一题一问 / 质量门 / 周期五问
 │       ├── cross-sections.md # L1 的 17 项横切面 + 五角色第二遍
 │       ├── contracts.md      # L3 契约 / L5 骨架判据 / L6 任务卡 / L7 派发
-│       └── modes.md          # S 档 vs M 档、升降级信号、单人六死法
+│       ├── modes.md          # S 档 vs M 档、升降级信号、单人六死法
+│       └── red-flags.md      # 完整 14 条红旗
 ├── examples/frames/          # 三份完整样例（是案例，不是规格）
 ├── CHANGELOG.md
 ├── LICENSE
 └── README.md
 ```
 
-`SKILL.md` 故意保持短，重内容按分支读 `references/`——避免一次塞满上下文。
+## 为什么主干短、细则外置
+
+两个原因，一个是工程上的，一个是认知上的。
+
+**工程上**：skill 的目录（name + description）改了下个模型步就刷新，但**正文是"加载即固化"**——已经加载过的那份留在对话历史里，改文件不会替换它，也不会通知模型"正文变了"。把易变的规则放进 `references/`，下次读取就是新内容，不用新开会话。主干只保留不常动的骨架。
+
+**认知上**：实测的两次失败（提前建目录、根本没加载）都是**遵循失败**，不是覆盖不足。这类问题上，加长正文是负收益——规则越多，每条被稀释得越厉害。
+
+## 与现有方法的关系
+
+- L1 ↔ BMAD 的 brief/PRD 层、OpenSpec 的 `explore`（"never writes code"）
+- 提问纪律 ↔ grill / ouroboros interview（一次一题、附建议答案、能查的不问）
+- 五角色扫描 ↔ requirement-gap-finder（PM / UX / 后端 / 前端 / QA 各扫一遍）
+- L3 ↔ spec-kit 的 spec 实体、OpenSpec 的 `design.md`
+- **L5 骨架是现有框架普遍缺失的一级**——它们都是"文档 → 任务"，中间没有可运行验证
+- L6 ↔ spec-kit 的 `tasks.md`（精确到文件 + 验证）
+- L7 ↔ superpowers 的 `subagent-driven-development`（每任务新 subagent + 两阶段 review）
 
 ## 怎么用
 
