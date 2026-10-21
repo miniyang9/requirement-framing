@@ -1,15 +1,17 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Scope: 只负责立项、提问、签字与交接块；架构设计、契约冻结、任务派发交棒给下游。Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.9.0"
+  version: "0.10.0"
   status: draft
 ---
 
 # Requirement Framing
 
 把一个"种子"变成可审查的规格——**在任何人开始拆任务之前**。
+
+**本 skill 只负责 L1（立项）**：从一句话到一份签了字的 frame + 一个交接块。架构、契约、切片、派发不在范围内，见"第 5 步：交棒"。
 
 ## 三条信条
 
@@ -37,7 +39,7 @@ frame 文档顶部必须有 `状态：`。
 |---|---|
 | **待答** | 只读、提问 |
 | **待签** | 只读；可写回文档本身 |
-| **已签** | 可以开工 |
+| **已签** | 可以开工（本 skill 范围内：可以产出交接块） |
 
 五条判据：**文档存在 ≠ 已签**（上一轮留下的默认"待签"）；**用户提问 ≠ 用户批准**；**新答案引入新未知 → 回退"待签"**；**执行档没写进文档 = 不能签**；**已签只授权 frame 里写明的范围**——加需求、扩范围都是新的未知，先回退"待签"再谈。
 
@@ -74,7 +76,7 @@ frame 文档顶部必须有 `状态：`。
 |---|---|---|
 | 单点修改，1 个单元（"把图标改成矢车菊蓝"） | **T0** | 直接做，不启动流程 |
 | 1 个可独立验收单元，<1 天 | **T1** | 只走"一页五问"，**拿到回答后**才动手 |
-| 多个可独立验收单元 | **T2** | 全流程 L1–L7 |
+| 多个可独立验收单元 | **T2** | 走完 L1（第 0–5 步） |
 | 已在拆任务或要派发 | **T2** | 先回退到 L1 |
 
 "工程 / 平台"不是判据，只是"通常跨很多单元"的症状。范围收窄（单点修改）是用户已经替你切好的结果，不是第二个判据。
@@ -122,32 +124,29 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 用户回复后：改 `状态：` 并回写文档。**不是"已签"不进第 4 步。**
 
-## 第 4–7 步：按执行档展开
+## 第 4 步：产出交接块
 
-先读 `references/modes.md` 定 S/M 档。
+签字之后，另写一页 `docs/frame/<slug>.handoff.md`。**它是 L1 的唯一出口，也是下游唯一要读的东西。**
 
-| 级 | S 档（单人 / 单 agent） | M 档（多人 / 多 agent） |
+必填七项：`范围` · `验收` · `三轴` · `已冻结` · `必须回答的设计问题` · `留给下游决定的` · `引用`。
+
+模板、三条纪律、以及"不合格的交接块长什么样"，读 `references/handoff.md`。
+
+## 第 5 步：交棒
+
+| 级 | 谁做 | 本 skill 提供 |
 |---|---|---|
-| L2 架构 | 一页图 | 分层、所有权、失败隔离 |
-| L3 契约 | **代码里的类型** | 文档 + 版本 |
-| L4 决策 | 四行日志 | ADR（含被否决项） |
-| L5 骨架 | 最薄垂直切片 | 端到端空壳 |
-| L6 切片 | 粒度 = 一次上下文 | 任务卡 + **星形** DAG |
-| L7 节奏 | 每片五步 | 派发 + 两阶段 review |
+| **L1 立项** | **本 skill** | 全部 |
+| L2 架构 | `solution-design`（待建） | 交接块 |
+| L3 契约 | 同上 | 交接块里的"已冻结"与"必须回答" |
+| L4 决策记录 | 同上 | 同上 |
+| L5 骨架 | 同上 | — |
+| L6 切片 / L7 派发 | 执行流（subagent / workflow / 常规实现） | 交接块里的验收与执行档 |
+| 编码 | 常规实现 | 门禁与验收标准 |
 
-细则读 `references/contracts.md`。三条硬约束：
+**交棒不是结束。** 交接完之后，如果下游反馈"交接块缺东西"，回到第 2 步补，而不是在下游就地发明。
 
-- L3 每个契约一个唯一写者，其余只读
-- L5 是 L2/L3 的验收测试，跑不通就回退，不往下走
-- 切任务看到依赖链 → 缺契约，回去找那个该冻结的东西
-
-## 铁律
-
-**M 档**：任务卡里发现契约不足 → **停下报告，不许自行扩展契约。**
-
-**S 档**：任何在上下文重置后还需要知道的东西，必须落盘。
-
-每片收尾四行：做了什么 / 没做什么 / 下次从哪开始 / **返工理由（必填）**。分类见 `references/contracts.md`。
+B（`solution-design`）尚未建成；它的素材暂存仓库 `staging/solution-design/`，**不随本 skill 安装**。
 
 ## 最容易犯的六条
 
@@ -158,24 +157,21 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 | "这块和未决问题无关，我先做掉" | 最贵的借口，无关性由未签字的人判断 |
 | "用户在问我问题，说明他在推进" | 提问是在要答案，不是给开工许可 |
 | "文档已经存在了，照着做" | 存在 ≠ 已签 |
-| "先把代码骨架搭起来" | 骨架的产出是判断，不是功能 |
+| "交接块等下游来问再说" | 交接块是本 skill 的出口。出口没写，等于没做完 |
 
-完整 14 条见 `references/red-flags.md`。
+完整 11 条见 `references/red-flags.md`。
 
 ## 产出物
 
 ```
-docs/frame/<slug>.md           # L1（顶部带 状态：）
-docs/arch/01-architecture.md   # L2
-docs/arch/02-contracts.md      # L3（S 档可省）
-docs/arch/03-decisions.md      # L4
-docs/arch/04-tasks.md          # L6
+docs/frame/<slug>.md           # L1 六件套（顶部带 状态：）
+docs/frame/<slug>.handoff.md   # 交接块（15 行以内）
 ```
 
-**L3 和 L5 不能省**——它们是"便宜的证伪"，砍掉不是变快，是把纠错点从半小时推到三周后。
+只有这两个。`docs/arch/` 及其后的产物归下游。
 
 **示例必须放 `examples/`，绝不放 `docs/frame/`**：同路径会让下一轮把示例当成已签规格。
 
 ---
 
-细则索引：`questioning.md`（提问纪律）· `cross-sections.md`（两遍扫描）· `contracts.md`（契约 / 骨架 / 任务卡）· `modes.md`（S/M 档）· `red-flags.md`（完整红旗）
+细则索引：`questioning.md`（提问纪律）· `cross-sections.md`（两遍扫描）· `handoff.md`（交接块模板与反例）· `red-flags.md`（完整 11 条）
