@@ -44,7 +44,7 @@ requirement-framing/
 ├── skills/requirement-framing/
 │   ├── SKILL.md              # 主干：信条 + 门禁 + 闸门 + 分流 + L0–L7 + 铁律
 │   └── references/
-│       ├── cross-sections.md # L1 的 17 项横切面判定表
+│       ├── cross-sections.md # L1 的 17 项横切面 + 五角色第二遍
 │       ├── contracts.md      # L3 契约 / L5 骨架判据 / L6 任务卡 / L7 派发
 │       └── modes.md          # S 档 vs M 档、升降级信号、单人六死法
 ├── examples/frames/          # 三份完整样例（是案例，不是规格）

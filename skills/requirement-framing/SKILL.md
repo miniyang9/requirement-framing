@@ -1,9 +1,9 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说"写代码"。Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Use when the user describes such work in brief prose, when it may span more than one session, when the user asks what is missing or how big it is, and before dispatching subagents or writing a task list. Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.5.0"
+  version: "0.6.0"
   status: draft
 ---
 
@@ -135,7 +135,7 @@ frame 文档顶部必须有 `状态：` 字段。
 
 1. **体量判定** — 分档 + 依据 + "判断错一档的后果"（判小会怎样、判大会怎样）
 2. **隐含工作包** — 必须做 / 可能要做 / 建议不做。每条标 `[推断]`（我补的）或 `[你说过]`
-3. **横切面覆盖** — 读 `references/cross-sections.md`，逐项给 `已有 / 待定（取决于什么）/ 不适用（为什么）`。**不许合并、不许跳过、不许写成散文。**
+3. **两遍扫描** — 先按层扫 17 项横切面，再按角色扫 5 个视角（都见 `references/cross-sections.md`），逐项给 `已有 / 待定（取决于什么）/ 不适用（为什么）`。**不许合并、不许跳过、不许写成散文。**
 4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价。按"晚定代价"降序
 5. **三种规模方案** — 最小可用 / 正规 / 平台化。各自**放弃什么、锁死什么**（只给放弃项的方案是假方案）
 6. **失败预演** — 三个死法 + 最早信号 + 对策
@@ -144,11 +144,39 @@ frame 文档顶部必须有 `状态：` 字段。
 
 **周期产出类**（定时推送 / 日报 / 监控）的五问固定为：**口径**（"最热 / 活跃 / 异常"到底按什么算）+ **数据源与失败告警** + **投递通道** + **时区与触发** + **幂等与重跑**。这五项里，口径永远排第一：它含糊，后面四项做得再好都是每天准时产出错误答案。
 
+### 提问纪律（三条，缺一条就退化成问卷）
+
+**① 先分类，再决定问谁。** 每个未决点先判它是哪一类：
+
+| 类型 | 判准 | 动作 |
+|---|---|---|
+| **可自查事实** | 文件 / 代码 / git / 只读命令查得到 | **自己查，不许问用户** |
+| **用户持有的事实** | 仓库里没有、只有他知道（现场状况、外部系统行为、未入库的约束） | 问；可附"我猜是 X" |
+| **决策** | 取舍、偏好、优先级、业务判断 | 问，必须由用户拍板 |
+
+问用户一个自己能查到的事，是最快的失信方式；把决策当事实自己填，是最贵的越线。
+
+**② 一次只问一题。** 预算仍是 5 题，但形式必须串行：问一题、等回答、再问下一题。一次丢五题，用户只会挑好答的答，剩下的变成你的假设。
+
+**③ 质量门：每个问题都要"具体到一句话能回答"，并附立场明确的建议答案。**
+
+- ❌ "要考虑安全性" / "需要注意性能" / "建议做好错误处理"
+- ✅ "同一笔订单重复提交两次，第二次拦在前端还是后端做幂等？**建议后端用 client_request_id 做幂等键，前端同时 disable 按钮**"
+- ✅ "用户填到一半离开页面，草稿保留吗？**建议不保留，但弹确认框**"
+
+建议答案要写成"建议 A，因为 B"。写"看你的需求"等于没给。
+
 **自检**：如果横切面 17 项全都"很重要"，说明在写套话。真实系统里一定有若干项应当判"不适用"。
 
 ## 第 3 步：人审与收缩
 
 交给用户，只要他做四件事：划掉不适用的、纠正 `[推断]`、回答 5 问、选规模。
+
+**收敛前先复述一遍。** 把谈定的东西压成一句话，问用户：
+
+> "别人只读这一行，会不会得到同样的结果？"
+
+这一步比"签字"更便宜，也更难糊弄——签字容易，复述难装。复述不过关，说明还有没谈拢的地方，回到第 2 步。
 
 **用户回复后做两件事**：把 `状态：` 改成"待签"或"已签"，并把每处回答写回文档。
 
@@ -193,6 +221,7 @@ frame 文档顶部必须有 `状态：` 字段。
 
 | 你正在想的 | 现实 |
 |---|---|
+| "这个我不确定，直接问用户吧" | 先判三分类。文件 / 代码 / git 能查到的先查；问一个自己查得到的事，是最快的失信 |
 | "用宿主自带的定时器排一个任务就交差" | 那只是投递方式，不是需求。口径没定，它会每天准时产出错的答案 |
 | "这个公式我随手定一个，透明就行" | 透明 ≠ 用户认可。"最热 / 活跃 / 异常"的定义必须由用户选，不能由发明者定 |
 | "这块和未决问题无关，我先做掉" | 这是最贵的借口。无关性由未签字的人判断，不算数 |
@@ -210,6 +239,8 @@ frame 文档顶部必须有 `状态：` 字段。
 ## 与现有方法的关系
 
 - L1 ↔ BMAD 的 brief/PRD 层、OpenSpec 的 `explore`（"never writes code"）
+- 提问纪律 ↔ grill / ouroboros interview（一次一题、附建议答案、能查的不问）
+- 五角色扫描 ↔ requirement-gap-finder（PM / UX / 后端 / 前端 / QA 各扫一遍）
 - L3 ↔ spec-kit 的 spec 实体、OpenSpec 的 `design.md`
 - **L5 骨架是现有框架普遍缺失的一级**——它们都是"文档 → 任务"，中间没有可运行验证
 - L6 ↔ spec-kit 的 `tasks.md`（精确到文件 + 验证）
