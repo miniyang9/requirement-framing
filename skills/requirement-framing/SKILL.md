@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.12.0"
+  version: "0.12.1"
   status: draft
 ---
 # Requirement Framing
@@ -29,6 +29,8 @@ metadata:
 **不包括**：`docs/frame/<slug>.md` 本身——它是提问与签字的载体，**必须先写**。
 
 **唯一例外**：只读探查，以及 `.tmp/` 里的一次性脚本。**探针的产出必须是结论，不是代码。**
+
+**探查有边界**：默认只看**当前工作区**和**用户明确指出的路径**。要跨出工作区（home、其他盘、内网、别的仓库），先说明"我在找什么"，问一句再动——**只读不等于可以翻遍用户的机器**。
 
 万能借口，一律不成立：
 
@@ -82,7 +84,13 @@ frame 文档顶部必须有 `状态：`。
 
 **不确定就问一句**："这个最后要交的是能跑的代码，还是一份文档/方案？"
 
-**退化 ≠ 敷衍**：不建档、不判体量档、不设门禁，但仍正常澄清与给建议，并明说"这不是重复运行的产物，我不启用立项展开"——让用户知道你**选择**了不启用。
+**退化 ≠ 敷衍**：不建档、不判体量档、不设门禁，但仍正常澄清与给建议。
+
+**退化必须说出来**，用一句话讲明白，不能默默降级：
+
+> 这不是会重复运行的产物，所以我不启用立项展开，直接回答。
+
+原因：用户分不清"它判断不需要"和"它没想到"。不说，就等于让他以为你漏了。
 
 ## 第 1 步：定体量档
 
@@ -104,6 +112,8 @@ frame 文档顶部必须有 `状态：`。
 **「待定」必须带缺项**：写清缺什么才能定（"缺：项目位置" / "缺：现有模块划分"）。只写"待定"、不写缺什么，等于没写，而且下一步没法推进。
 
 **「待定」不是新的一档。** 它只表示"我还判不了"，一旦缺口补上就必须落到 T0/T1/T2 之一——它不许一直挂在那里。
+
+**事实为零时，可以先问再展开。** 如果缺的是"东西在哪"这类地基事实，允许第一轮只问位置、先不写 frame——拿不到位置就展开，等于编造。拿到之后再走第 2 步。**顺序可以变，承诺不变**（仍然不创建任何可执行产物）。
 
 T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T1 不逐项走 17 项横切面——这是刻意减配，不是遗漏。
 
