@@ -45,13 +45,18 @@
 
 ```
 requirement-framing/
-├── skills/requirement-framing/
+├── skills/requirement-framing/   # A：L1 立项
 │   ├── SKILL.md              # 主干：信条 + 门禁 + 闸门 + 体量档 + L1 + 交棒 + 指针
 │   └── references/           # 细则，按需读取
 │       ├── questioning.md    # 提问纪律：三分类 / 一题一问 / 质量门 / 周期五问
 │       ├── cross-sections.md # 17 项横切面 + 五角色第二遍
 │       └── red-flags.md      # L1 侧 11 条红旗
-├── staging/solution-design/  # B 的素材，尚未成 skill，不随 A 安装
+├── skills/solution-design/   # B：L2–L5 架构 / 契约 / 决策 / 骨架判据
+│   ├── SKILL.md              # 门禁（读已签 frame）+ 五个架构问题 + 契约判据 + 交棒
+│   └── references/
+│       ├── contracts.md      # 六个契约 / 桩 / 单人等价物
+│       └── modes.md          # S/M 判定 + L2–L5 逐级对照
+├── staging/dispatch/         # C 的素材，尚未成 skill，不安装
 ├── examples/frames/          # 三份完整样例（是案例，不是规格）
 ├── CHANGELOG.md
 ├── LICENSE
@@ -62,8 +67,9 @@ requirement-framing/
 
 | 级 | 谁做 |
 |---|---|
-| L1 立项 | **本 skill** |
-| L2 架构 · L3 契约 · L4 决策 · L5 骨架 | `solution-design`（待建，素材在 `staging/`） |
+| L1 立项 | **`requirement-framing`** |
+| L2 架构 · L3 契约 · L4 决策 · L5 骨架 | **`solution-design`** |
+| L6 切片 · L7 派发 | `staging/dispatch/`（尚未成 skill） |
 | L6 切片 · L7 派发 · 编码 | 执行流（subagent / workflow / 常规实现） |
 
 **为什么拆**：需求展开和架构设计的**触发时机不同**——"我还没想清楚要做什么" vs "我知道要做什么，不知道该怎么拆"。一个 skill 只有一个 description，混在一起会让两类场景都半准不准。
