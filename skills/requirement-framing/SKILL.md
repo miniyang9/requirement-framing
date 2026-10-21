@@ -1,6 +1,6 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Scope: 只负责立项、提问、签字与交接块；架构设计、契约冻结、任务派发交棒给下游。Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Scope: 只负责立项、提问、签字，产物是一份 frame；架构设计、契约冻结、任务派发都在下游。Not for a one-off answer, plan, research report, or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
   version: "0.10.2"
@@ -11,7 +11,7 @@ metadata:
 
 把一个"种子"变成可审查的规格——**在任何人开始拆任务之前**。
 
-**本 skill 只负责 L1（立项）**：从一句话到一份签了字的 frame + 一个交接块。架构、契约、切片、派发不在范围内，见"第 5 步：交棒"。
+**本 skill 只负责 L1（立项）**：从一句话到一份签了字的 frame。架构、契约、切片、派发不在范围内，见"第 5 步：交棒"。
 
 ## 三条信条
 
@@ -39,7 +39,7 @@ frame 文档顶部必须有 `状态：`。
 |---|---|
 | **待答** | 只读、提问 |
 | **待签** | 只读；可写回文档本身 |
-| **已签** | 可以开工（本 skill 范围内：可以产出交接块） |
+| **已签** | 可以开工（本 skill 范围内：可以交付） |
 
 五条判据：**文档存在 ≠ 已签**（上一轮留下的默认"待签"）；**用户提问 ≠ 用户批准**；**新答案引入新未知 → 回退"待签"**；**执行档没写进文档 = 不能签**；**已签只授权 frame 里写明的范围**——加需求、扩范围都是新的未知，先回退"待签"再谈。
 
