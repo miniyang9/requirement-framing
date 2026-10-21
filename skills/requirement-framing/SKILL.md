@@ -1,212 +1,211 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物（脚本 / 服务 / 定时推送 / 每日简报 / 监控 / 机器人）的需求展开与立项梳理，即使用户没有说「写代码」。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.11.0"
+  version: "0.11.1"
   status: draft
 ---
-
 # Requirement Framing
 
-Turn a seed into a reviewable frame — **before anyone starts decomposing tasks**.
+把一个"种子"变成可审查的规格——**在任何人开始拆任务之前**。
 
-**This skill covers L1 only**: from one sentence to a signed frame. Architecture, contracts, slicing and dispatch are out of scope; see "Step 5: handoff".
+**本 skill 只负责 L1（立项）**：从一句话到一份签了字的 frame。架构、契约、切片、派发不在范围内，见"第 5 步：交棒"。
 
-## Three creeds
+## 三条信条
 
-1. **The input is a seed, not a spec.** Those few sentences say what the thing is and roughly its shape — not something testable. The default move is to expand it, not to complete it.
-2. **Expand first, ask second.** Walk the checklist to surface what you know and the user did not say; then ask only what you cannot judge. Asking first makes the user do your homework.
-3. **The expansion must not take the form of a task list.** Anything shaped like a list will slide all the way down into tasks.
+1. **输入是种子，不是规格。** 那几句话说的是"什么事、大概什么形状"，不是可验证的东西。默认动作不是补全它，而是展开它。
+2. **先展开，后提问。** 先走清单把"你知道但用户没说"的倒出来，再只问自己判断不了的。先问问题，等于让用户替你做功课。
+3. **展开的产物在形态上不能是任务列表。** 只要产物是列表，就会一路收敛到底。
 
-## HARD GATE
+## 门禁（HARD-GATE）
 
-> **If `Status` is not `signed`, creating any executable artifact or project skeleton is forbidden.**
+> **`状态` 不是「已签」，就禁止创建任何「可执行产物或工程结构」。**
 
-**The status field is the only authority** — not "I already asked", not "all three axes are chosen". When status and conditions disagree, trust the status.
+**唯一权威是状态字段**——不是"我已经问过了"，也不是"三轴都选了"。状态与条件不一致时，信状态。
 
-**Covered**: code / scaffolding / tests / sample configs / deploy scripts; creating project directories; installing dependencies / initializing a repo / lockfiles.
+**包括**：代码 / 脚手架 / 测试 / 配置样例 / 部署脚本；建项目目录；装依赖 / 初始化仓库 / lockfile。
 
-**Not covered**: the frame file `docs/frame/<slug>.md` itself — it carries the questions and the signature and **must be written first**.
+**不包括**：`docs/frame/<slug>.md` 本身——它是提问与签字的载体，**必须先写**。
 
-**Only exception**: read-only probing, and one-off scripts under `.tmp/`. **A probe must yield a conclusion, not code.**
+**唯一例外**：只读探查，以及 `.tmp/` 里的一次性脚本。**探针的产出必须是结论，不是代码。**
 
-No universal excuse holds:
+万能借口，一律不成立：
 
-> "This part is unrelated to the open questions, so I'll do it first."
+> "这部分和未决问题无关，我先做掉。"
 
-### Signature states
+### 签字状态
 
-The top of the frame file must carry `Status:`.
+frame 文档顶部必须有 `状态：`。
 
-| Status | Allowed actions |
+| 状态 | 允许的动作 |
 |---|---|
-| **open** (待答) | read-only, ask questions |
-| **pending** (待签) | read-only; may write back into this document |
-| **signed** (已签) | may start work (within this skill: may deliver) |
+| **待答** | 只读、提问 |
+| **待签** | 只读；可写回文档本身 |
+| **已签** | 可以开工（本 skill 范围内：可以交付） |
 
-**Seven conditions — all required:**
+**七条判据，缺一不能签：**
 
-1. **The document exists ≠ it is signed** — a leftover `pending` from a previous round is not a signature
-2. **A user question ≠ user approval** — they are asking you something, not granting work permission
-3. **No `Execution mode` in the document = cannot sign**
-4. **A signature authorizes only the scope written in the frame** — new requirements or wider scope are new unknowns: roll back first, discuss after
-5. **Only a human can sign** — an agent must never sign on their behalf; treating another agent's acknowledgement as user approval is forgery
-6. **Classify new unknowns first**: a *user decision* → reopen the question and roll back to `pending`; a *verifiable fact* (a probe can answer it) → record it under §0, and **do not block the signature**
-7. **Changing a recommended answer requires rewriting everything** — rewrite every affected section before changing the status; editing only the decision row leaves two sets of truth
+1. **文档存在 ≠ 已签**——上一轮留下的默认"待签"
+2. **用户提问 ≠ 用户批准**——他是在问你，不是给你开工许可
+3. **执行档没写进文档 = 不能签**
+4. **已签只授权 frame 里写明的范围**——加需求、扩范围都是新的未知，先回退再谈
+5. **签字只能由人类给出**——agent 不得代签；把"另一个 agent 的确认"当作用户确认，等于伪造
+6. **新未知先分类**：用户决策 → 重开问题、状态回退"待签"；待查事实（探针能查）→ 写成 §0 承重事实，**不卡签字**
+7. **改选推荐项要全量回写**——改了某题就重写所有受影响段落再改状态；只改决策点那一行，等于留下两套事实
 
-## First reply after loading
+## 加载后的第一条回复
 
 ```
-Size tier:  T0 / T1 / T2
-Open:       Q1 … / Q2 … (never write "none")
-Commitment: I will create no files until these are answered.
+体量档：T0 / T1 / T2
+未决：Q1 …／Q2 …（没有写"无"）
+承诺：在收到这些回答前，我不会创建任何文件。
 ```
 
-## Step 0: domain gate
+## 第 0 步：领域闸门
 
-This skill serves **artifacts that run repeatedly**. Test: will it execute more than once, or is it a one-off answer?
+只服务**会重复运行的产物**。判据：它会被执行不止一次，还是一次性回答？
 
-| Request | Verdict |
+| 需求 | 判定 |
 |---|---|
-| Script / service / tool / agent / change to an existing codebase | yes |
-| Scheduled push / daily digest / monitor / bot | **yes** — even if the implementation is one scheduler entry |
-| One-off script, thrown away after it runs; one-off answer, plan, research, report, article, event plan | **degraded** — no framing |
+| 脚本 / 服务 / 工具 / agent / 改造存量代码库 | 是 |
+| 定时推送 / 日报 / 监控 / 机器人 | **是**——哪怕实现只是一条调度器条目 |
+| 一次性脚本（跑完就丢）/ 一次性回答 / 方案 / 调研 / 汇报 / 文章 / 活动策划 | **退化**——不立项 |
 
-Reason: repeated execution means any vague definition **produces a wrong answer every day**, not once. Ignore the implementation form (code / scheduler / spreadsheet / manual process); look only at whether it runs again.
+理由：重复运行意味着任何一处口径含糊，都会**每天稳定产出错的答案**，而不是错一次。别看实现形态（代码 / 调度器 / 表格 / 人工流程），只看它会不会反复执行。
 
-**When unsure, ask one thing**: "Is the deliverable something that runs, or a document/proposal?"
+**不确定就问一句**："这个最后要交的是能跑的代码，还是一份文档/方案？"
 
-**Degraded ≠ dismissive**: no frame, no size tier, no gate — but still clarify and advise, and say plainly "this does not run repeatedly, so I am not switching on framing". Let the user see that you **chose** not to.
+**退化 ≠ 敷衍**：不建档、不判体量档、不设门禁，但仍正常澄清与给建议，并明说"这不是重复运行的产物，我不启用立项展开"——让用户知道你**选择**了不启用。
 
-## Step 1: size tier
+## 第 1 步：定体量档
 
-**One criterion: how many independently verifiable units does this delivery span?**
+**判据只有一条：这次交付要跨几个"可独立验收单元"？**
 
-| Input | Tier | Levels |
+| 输入 | 体量档 | 走哪些级 |
 |---|---|---|
-| Single-point change, 1 unit, **no new files, no new dependencies, no contract change** | **T0** | Do it directly, no process |
-| 1 independently verifiable unit, < 1 day | **T1** | **Write a one-page frame (five questions) + sign it**, then work |
-| Multiple independently verifiable units | **T2** | Run all of L1 (steps 0–5) |
-| Already decomposing tasks, or asking for dispatch | **T2** | Roll back to L1 first |
+| 单点修改，1 个单元，**且不新增文件、不新增依赖、不动契约** | **T0** | 直接做，不启动流程 |
+| 1 个可独立验收单元，<1 天 | **T1** | **写一页 frame（五问）+ 签字**，然后动手 |
+| 多个可独立验收单元 | **T2** | 走完 L1（第 0–5 步） |
+| 已在拆任务或要派发 | **T2** | 先回退到 L1 |
 
-"Engineering" or "platform" is not a criterion — it is a symptom of spanning many units. Narrow scope (single-point change) is a result the user already produced for you, not a second criterion.
+"工程 / 平台"不是判据，只是"通常跨很多单元"的症状。范围收窄（单点修改）是用户已经替你切好的结果，不是第二个判据。
 
-**Print the verdict as an explicit line**, or you will drift to T2 by default.
+**必须显式输出一行判定**，否则会默认滑向 T2。
 
-T1's five questions: size / acceptance / non-goals / **biggest ambiguity** / what if it fails. T1 does not walk the 17 cross-sections — a deliberate reduction, not an omission.
+T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T1 不逐项走 17 项横切面——这是刻意减配，不是遗漏。
 
-**T1 reduces the expansion, not the authorization.** It still produces `docs/frame/<slug>.md` and still needs `Status: signed`; only the content shrinks from six parts to five questions, with no §0.
+**T1 减配的是展开量，不是授权。** 它照样产出 `docs/frame/<slug>.md`，照样要有 `状态：已签`，只是内容从六件套缩到五问、不写 §0。
 
-**Never downgrade yourself.** Judging a request to be T0/T1 is the model's move, and it decides whether a signature happens — so it must be **written into the frame header and confirmed by the signature**. A downgrade without a frame is a line crossed.
+**不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以必须**写进 frame 头部**、随签字一并确认。没有 frame 的降档 = 越线。
 
-### Three axes, never mixed
+### 三个轴，别混
 
-One requirement has three things to settle. They are orthogonal and **settled by different parties**:
+同一份需求要定三件事，它们正交，而且**由不同的人定**：
 
-| Axis | Fixed term | Answers | Decided by |
+| 轴 | 固定叫法 | 回答什么 | 谁定 |
 |---|---|---|---|
-| Size | **Size tier** T0 / T1 / T2 | How many independently verifiable units | Model judges, **written into the frame and confirmed with the signature** (T0 excepted) |
-| Scope | **Scope plan** minimal / standard / platform | How much; what is given up, what is locked | **User chooses** |
-| Execution | **Execution mode** S / M | **Parallel fronts ≥ 2 and each independently verifiable → M; otherwise S** (big ≠ M) | Model proposes, **user confirms** |
+| 体量 | **体量档** T0 / T1 / T2 | 跨几个可独立验收单元 | 模型判定，**写进 frame、随签字一并确认**（T0 除外） |
+| 范围 | **范围方案** 最小 / 正规 / 平台化 | 做多少；放弃什么、锁死什么 | **用户选** |
+| 执行 | **执行档** S / M | **并行面 ≥2 且能各自独立验收 → M；否则 S**（体量大 ≠ M） | 模型提议，**用户确认** |
 
-**No axis implies another**: platform scope can be S (one person, longer); a minimal build can be M (two people, front and back). "Chose platform" does not mean M; "chose minimal" does not mean no slicing.
+**三个轴互不推出**：平台化可以是 S（一个人做久一点），最小可用也可以是 M（两人分头做前后端）。"选了平台化"不等于 M，"选了最小"也不等于不用切任务。
 
-Use only these three fixed terms in full. Any vague word like "scale" or "level" gets replaced by one of them.
+全文只用这三个固定叫法。看到"规模""档位"这类含糊词，一律替换成上面某一个。
 
-## Step 2: L1 expansion (six parts)
+## 第 2 步：L1 展开（六件套）
 
-Produce `docs/frame/<slug>.md`, starting with **four lines**:
-
-```
-Status:          open
-Size tier:       T0 · T1 · T2
-Scope plan:      minimal / standard / platform (to be chosen)
-Execution mode:  S or M (to be confirmed)
-```
-
-Then a `## 0. Load-bearing facts` section. **No task lists, file paths, implementation steps or code this round.**
-
-**These four lines are literally checkable fields**: `Scope plan` must occupy its own line, or downstream cannot verify "all three axes present"; a value still carrying "(to be confirmed)" does not count as settled.
-
-1. **Size ruling** — tier + basis + the cost of being one tier wrong
-2. **Implied work packages** — must do / maybe / recommend not; tag each `[inferred]` or `[you said]`. Write **capabilities and responsibilities** ("frame capture and coordinate normalization"), never **steps** ("write a `grab()` function") — steps are a task list and are forbidden this round
-3. **Two passes** — layers first (17 items), then roles (5), per `references/cross-sections.md`; each item gets present / open (depends on what) / not applicable (why) / **not doing (reason + who cut it)**
-4. **Decision points** — options / recommendation / reversibility / cost of deciding late / **attached constraints (consequences)**, sorted by cost of deciding late. That cost must carry a **type**: `rework` / `irreversible` / `opportunity cost` — never mixed in one ranking. **Decision points = the question pool; asking = taking the top five by impact × uncertainty**
-5. **Three scope plans** — minimal / standard / platform, each with **what it gives up and what it locks**
-6. **Failure rehearsal** — three ways it dies + earliest signal + response
-
-**Read `references/questioning.md` before asking**: triage decides who to ask, one question at a time, every question carries a committed recommendation. Five questions maximum.
-
-### Consequences get missed more easily than decisions
-
-What the user approved is the **decision**, not its **consequences**. Example: decision = "use WeChat"; consequence = "the service-account template message cannot hold a 1.5 KB body, so the body must live behind a link". The user never approved that, yet it constrains everything downstream — miss it and you design as if WeChat carries long text.
-
-**A consequence is not a requirement; it is what the requirement implies.** Write it on the decision row **and** as one short anchored line under `## 0. Load-bearing facts` — the first thing downstream reads.
-
-Writing "premise → consequence" as one sentence is allowed (readability beats formal purity): "once we go black-box visual, the system has no widget identity → therefore every click must be preceded by a confidence-scored target decision". The premise is the first half; the constraint is the second. **Judge the second half: it must be an executable constraint, not an adjective.**
-
-## Step 3: human review and contraction
-
-The user does **five things**: strike inapplicable items, correct `[inferred]`, answer questions, **choose the scope plan**, **confirm the execution mode**.
-
-**Signing is one submission, not three rounds of questions.** All five can be presented at once — "one question at a time" constrains **asking**, not **submitting**. Cramming three decisions into one question and then calling it a violation confuses the two interactions.
-
-Per Step 1's table, the user settles **scope plan** and **execution mode** here; the size tier can be overturned but need not be re-chosen.
-
-**Restate before contracting**: compress the goal into one sentence and ask "would a stranger reading only this line reach the same result?". Cheaper than a signature and harder to fake; if it fails, go back to Step 2.
-
-After the user replies: write back the document + a signature block, then change the status.
+产出 `docs/frame/<slug>.md`，顶部先写**四行**：
 
 ```
-Signed by: <human name or role>    Date: <YYYY-MM-DD>    Version: <n>
+状态：待答
+体量档：T0 · T1 · T2
+范围方案：最小 / 正规 / 平台化（待选）
+执行档：S 或 M（待确认）
 ```
 
-**The signature block is a hard field.** Without it, downstream cannot verify who signed which version when.
+紧跟 `## 0. 承重事实` 一节。**本轮禁止任务列表、文件路径、实现步骤、代码。**
 
-**Any edit after signing invalidates the signature** — including "just going back to Step 2 to add a line". The first step of editing a signed frame is **reverting the status to `pending`**, then re-signing. On seeing `pending`, downstream must stop — not reason that "the content is all there".
+**这四行是逐字可检查的字段**：`范围方案` 必须单独占一行，否则下游没法验证"三轴齐"；`执行档` 带"（待确认）"时不算定。
 
-**If status is not `signed`, do not enter Step 4.**
+1. **体量判定** — 分档 + 依据 + 判错一档的后果
+2. **隐含工作包** — 必须做 / 可能要做 / 建议不做；每条标 `[推断]` 或 `[你说过]`。写**能力与责任**（"帧采集与坐标归一化"），不写**步骤**（"写一个 grab() 函数"）——后者是任务列表，本轮禁止
+3. **两遍扫描** — 先层（17 项）再角色（5 个），读 `references/cross-sections.md`；每项给 已有 / 待定（取决于什么）/ 不适用（为什么）/ **不做（理由 + 谁砍的）**
+4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价 / **连带约束（推论）**，按晚定代价降序。晚定代价要**标类型**：`返工` / `不可逆` / `机会成本`——三种不能混排。**决策点 = 问题池；提问 = 从池里按"影响 × 不确定度"取前 5 个**
+5. **三种范围方案** — 最小 / 正规 / 平台化，各自**放弃什么、锁死什么**
+6. **失败预演** — 三个死法 + 最早信号 + 对策
 
-## Step 4: check the artifact
+**提问前先读 `references/questioning.md`**：三分类决定问谁、一次只问一题、每题带立场明确的建议答案。最多 5 题。
 
-After signing, do one thing: **confirm §0 of the frame is complete**. It is the only place downstream reads first.
+### 推论比决策更容易被漏
 
-Five checks:
+拍板的是**决策**，不是它的**后果**。例：决策 =「通道用微信」；推论 =「服务号模板消息装不下 1.5 KB 正文，必须挂外链」。后者用户没拍板过，但下游全受它约束——不知道就会按"微信能发长文"来设计。
 
-- [ ] Every load-bearing fact is a **consequence**, not a decision ("channel = WeChat" is a decision; "the template message cannot hold the body" is a fact)
-- [ ] Every one is anchored (`§4 D4`), not from memory
-- [ ] Every "explicitly not doing" item carries a reason, so downstream will not add it back
-- [ ] Every open item is either cleared or marked "defaulting to the recommendation, overturnable"
-- [ ] **Cross-section consistency**: does an item in §2 "maybe" contradict a "given up" in some §5 plan? Does a decision revised in §4 still support its §0 anchor? Have the user's answers been written back into §1–§6?
+**推论不是需求，是需求的后果。** 写在决策点表那一行，**同时在 `## 0. 承重事实` 里列一条带锚点的短句**——那是下游打开 frame 第一眼要看的东西。
 
-If a check fails, go back to Step 2 — do not carry it downstream.
+允许"前提 → 推论"连写一句（读得通比形式纯更重要）：F1 这种"走上黑盒视觉之后，系统没有控件身份 → 所以每次点击前必须有带置信度的判定"，前半句是前提，后半句才是约束。**判据落在后半句：它必须是一条可执行的约束，不是形容词。**
 
-## Step 5: handoff
+## 第 3 步：人审与收缩
 
-| Level | Who | What this skill provides |
+用户做**五件事**：划掉不适用的、纠正 `[推断]`、答问、**选范围方案**、**确认执行档**。
+
+**签字是一次提交，不是三轮提问。** 五件事可以一次给全——"一次只问一题"约束的是**提问**，不是**提交**。把三个决策塞进一道题里再自认违规，是没分清这两种交互。
+
+三个轴的决策权见第 1 步的表。这里用户要定的是**范围方案**和**执行档**；体量档可推翻，但不必重选。
+
+**收敛前先复述**：把目标压成一句话，问"别人只读这一行，会不会得到同样的结果？"。这比签字便宜，也更难糊弄；不过关就回第 2 步。
+
+用户回复后：回写文档 + 写签字块，然后改状态。
+
+```
+签字人：<人类的名字或身份>    签字日期：<YYYY-MM-DD>    版本：<n>
+```
+
+**签字块是硬字段。** 没有它，下游无法验证"这份 frame 是谁、什么时候、哪一版签的"。
+
+**签完之后任何改动都会让签字失效**——包括"回第 2 步补一句"。改已签 frame 的第一步是**把状态改回 `待签`**，改完重签。B 读到 `待签` 就该停下，而不是"反正内容都在"。
+
+**不是"已签"不进第 4 步。**
+
+## 第 4 步：检查交付物
+
+签完字之后只做一件事：**确认 frame 的第 0 节写全了**。那是下游唯一先看的地方。
+
+五条自检：
+
+- [ ] 每条承重事实都是**推论**，不是决策本身（"通道=微信"是决策；"模板消息装不下正文"才是承重事实）
+- [ ] 每条都带锚点（`§4 D4`），不靠印象
+- [ ] "明确不做"的条目带了理由，下游不会把它加回来
+- [ ] 未决项要么清空，要么标了"按推荐取默认，可推翻"
+- [ ] **跨节一致**：§2「可能要做」里的项，§5 某档是否已判"放弃"？§4 改过结论的决策点，§0 的锚点是否还成立？用户的回答是否已回写到 §1–§6？
+
+检查不过就回第 2 步补，不要带到下游。
+
+## 第 5 步：交棒
+
+| 级 | 谁做 | 本 skill 提供 |
 |---|---|---|
-| **L1 framing** | **this skill** | everything |
-| L2 architecture · L3 contracts · L4 decisions | `solution-design` | **the signed frame** (read §0 first) |
-| L5 skeleton | criteria in `solution-design`, execution in `incremental-delivery` | the same frame |
-| L6 slicing / L7 execution | `incremental-delivery` (S mode only; M mode unimplemented) | acceptance criteria and execution mode from the frame |
+| **L1 立项** | **本 skill** | 全部 |
+| L2 架构 · L3 契约 · L4 决策记录 | `solution-design` | **已签的 frame**（先读 §0） |
+| L5 骨架 | 判据在 `solution-design`，执行在 `incremental-delivery` | 同上 |
+| L6 切片 / L7 执行 | `incremental-delivery`（只实现 S 档；M 档未实现） | frame 里的验收与执行档 |
 
-**Handoff is not the end.** If downstream reports that the frame is missing something, go back to Step 2 — do not invent it in place.
+**交棒不是结束。** 下游若反馈"frame 缺东西"，回第 2 步补，不要在下游就地发明。
 
-**Cross-session needs no extra artifact**: re-reading the signed frame is the complete handoff. What must travel is **a decidable state** (`Status: signed`) and **a locatable input** (the slug) — not a copy of the content.
+**跨 session 不需要额外产物**：下游重新读一遍已签的 frame 就是完整的交接。真正要传的是**状态可判定**（`状态：已签`）和**输入可定位**（slug），不是内容副本。
 
-Both downstream skills exist. **Cross-skill references rot when the upstream changes** — if you rename or rescope a downstream skill, come back and sync this table.
+下游两个 skill 都已存在（`solution-design` / `incremental-delivery`）。**跨 skill 的引用会随上游变更失效**——改了下游的名字或范围，回来同步这张表。
 
-## Artifact
+## 产出物
 
 ```
-docs/frame/<slug>.md    # the only artifact: four header lines + §0 + the six parts
+docs/frame/<slug>.md    # 唯一产物：四行状态 + §0 承重事实 + 六件套
 ```
 
-Only this. `docs/arch/` and everything after belongs downstream.
+只有这一个。`docs/arch/` 及其后的产物归下游。
 
-**Examples must never live under `docs/frame/`** — the same path lets a later round mistake an example for a signed spec.
+**示例绝不放在 `docs/frame/` 下**——同路径会让下一轮把示例当成已签规格。
 
 ---
 
-Detail index: `questioning.md` (asking discipline) · `cross-sections.md` (two passes) · `red-flags.md` (11 red flags)
+细则索引：`questioning.md`（提问纪律）· `cross-sections.md`（两遍扫描）· `red-flags.md`（完整 11 条）

@@ -1,41 +1,41 @@
-# Execution mode: S vs M
+# 执行档：S 与 M
 
-The execution mode was settled at L1; here you only consume it — **it decides which column the later levels take**.
+执行档在 L1 就定了，这里只是消费它：**决定后几级取哪一列**。
 
-## How to decide (and re-check L1)
+## 怎么判定（回看 L1 是否判对）
 
-**Do not judge by size. Judge by whether parallel fronts exist.**
+**别用"体量大小"判，用"有没有并行面"判。**
 
-| Test | Leans |
+| 判据 | 倾向 |
 |---|---|
-| Only one writer (you, or one agent) | **S** |
-| ≥2 fronts that can start at once and be accepted independently | **M** |
-| Everyone edits the same executable body | **S** — multiple writers on one pipeline only add coordination cost |
-| Someone only reviews / accepts, writes no code | still **S** — review is not a parallel front |
+| 只有一个写者（你，或一个 agent） | **S** |
+| 有 ≥2 个能同时开工、且各自能独立验收的面 | **M** |
+| 所有人都在改同一个可执行体 | **S**——多写者挤在一条流水线上，拆开只增加协调成本 |
+| 有人只做审查/验收，不写代码 | 仍是 **S**——review 不是并行面 |
 
-In one line: **parallel fronts ≥ 2, each independently acceptable → M is worth it; otherwise S.**
+一句话：**并行面 ≥ 2 且能各自独立验收 → 值得上 M；否则 S。**
 
-Large ≠ needs M. A three-day single-threaded pipeline (fetch → rank → render → send) is a textbook S.
+体量大 ≠ 需要 M。一个三天的单线程流水线（抓取 → 排序 → 渲染 → 发送）是典型 S。
 
-⚠️ **Multiple people on the product side ≠ multiple people on the execution side**:
+⚠️ **产品侧多人 ≠ 执行侧多人**：
 
-- **Product side**: how many users, do we need roles and permissions → L1 cross-section #2
-- **Execution side**: how many writers, how to split → this section
+- **产品侧**：几个用户、要不要角色权限 → 归 L1 的横切面第 2 项
+- **执行侧**：几个写者、怎么切 → 归本节
 
-## Level by level (L2–L5)
+## 逐级对照（L2–L5）
 
-| Level | S mode | M mode |
+| 级 | S 档 | M 档 |
 |---|---|---|
-| L2 architecture | 1–3 views, fitting on one screen | layering, data ownership, failure isolation |
-| L3 contracts | **types in code** | document + version + sole writer |
-| L4 decisions | five-column log (ID / date / decision / rationale / rejected) | ADR (including rejected options) |
-| L5 skeleton | thinnest vertical slice | end-to-end shell, all interfaces wired |
+| L2 架构 | 1–3 视图，能画在一屏内 | 分层、数据所有权、失败隔离 |
+| L3 契约 | **代码里的类型** | 文档 + 版本 + 唯一写者 |
+| L4 决策 | 五列日志（编号 / 日期 / 决定 / 理由 / 否决） | ADR（含被否决项） |
+| L5 骨架 | 最薄垂直切片 | 端到端空壳，接口全通 |
 
-L6 slicing and L7 dispatch belong to C; this skill does not expand them.
+L6 切片与 L7 派发属于 C，本 skill 不展开。
 
-## The cost of judging wrong
+## 判错的代价
 
-- **M judged as S**: two writers share one executable body, each invents interfaces, and the mismatch surfaces at merge time
-- **S judged as M**: a full multi-writer apparatus (contract documents, version numbers, task cards) for one writer — pure overhead, and it slows the first delivery
+- **该 M 判成 S**：两个写者共用一个可执行体，接口各自发明，合并时才发现对不上
+- **该 S 判成 M**：为一个写者搭一套多写者设施（契约文档、版本号、任务卡），纯开销，而且拖慢第一次交付
 
-**The signal**: if during design you find you "must write a contract document before starting" while you are the only person writing — you judged wrong. Go back to L1 and change the frame; do not force it here.
+**判错的信号**：如果设计阶段你发现"必须先写一份契约文档才能开工"，但全场只有你一个人写——那是判错了，回 L1 改 frame，不要在这里硬撑。

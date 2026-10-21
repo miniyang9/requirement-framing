@@ -1,58 +1,58 @@
-# Asking discipline
+# 提问纪律
 
-Read this when L1 expansion reaches "time to ask the user". Lose any one of the three disciplines and this degrades into a questionnaire.
+L1 展开走到"该问用户了"这一步时读这份。三条纪律缺一条就会退化成问卷。
 
-## 1. Classify before deciding whom to ask
+## 一、先分类，再决定问谁
 
-Every open point gets a class first:
+每个未决点先判它是哪一类：
 
-| Class | Test | Action |
+| 类型 | 判准 | 动作 |
 |---|---|---|
-| **Self-checkable fact** | reachable via files / code / git / read-only commands | **look it up; never ask** |
-| **Fact the user holds** | absent from the repo, only they know (site conditions, external system behavior, unwritten constraints) | ask; may attach "I'd guess X" |
-| **Decision** | trade-off, preference, priority, business judgement | ask — only the user can settle it |
+| **可自查事实** | 文件 / 代码 / git / 只读命令查得到 | **自己查，不许问用户** |
+| **用户持有的事实** | 仓库里没有、只有他知道（现场状况、外部系统行为、未入库的约束） | 问；可附"我猜是 X" |
+| **决策** | 取舍、偏好、优先级、业务判断 | 问，必须由用户拍板 |
 
-Two symmetric mistakes, unequal cost:
+两条对称的错误，代价不同：
 
-- **Asking the user something you could look up** → the fastest way to lose trust. They instantly know you never opened the repo.
-- **Filling in a decision as if it were a fact** → the most expensive line to cross. Three weeks later they find it is not what they wanted.
+- **问用户一件自己能查到的事** → 最快的失信。他立刻知道你连仓库都没看。
+- **把决策当事实自己填** → 最贵的越线。他会在三周后发现"这不是我要的"。
 
-## 2. One question at a time
+## 二、一次只问一题
 
-Ask one, wait, ask the next. **Never throw four or five at once.**
+问一题、等回答、再问下一题。**不要一次抛出四五题。**
 
-The reason is information quality, not politeness: give five at once and the user answers the easy ones, silently delegating the rest to "you decide" — those quietly become your assumptions, and nobody remembers they were never confirmed.
+原因不是礼貌，是信息质量：一次丢五题，用户只会挑好答的答，剩下的他会默认"你看着办"——那部分就悄悄变成了你的假设，而且没人记得它没被确认过。
 
-⚠️ **This constrains asking, not the signing submission.** At Step 3, presenting the scope plan, the execution mode and the struck items **all at once** is correct — that is a submission, not a question. Cramming three decisions into one question and then calling it a violation confuses the two interactions.
+⚠️ **这条约束的是"提问"，不是"签字提交"。** 第 3 步让人审时，把范围方案、执行档、划掉的项**一次给全**是对的——那不是提问，是一次提交。把三个决策硬塞进一道题里再自认违规，是把两种交互搞混了。
 
-## 3. Quality gate: every question must be answerable in one sentence
+## 三、质量门：每个问题都要"具体到一句话能回答"
 
-And it must carry a **committed recommendation**.
+并附**立场明确的建议答案**。
 
-| ❌ Fails | ✅ Passes |
+| ❌ 不合格 | ✅ 合格 |
 |---|---|
-| "We should consider security" | "If the same order is submitted twice, does the second one get blocked in the frontend or made idempotent in the backend? **Recommend: idempotency key from `client_request_id` in the backend, plus disabling the button in the frontend**" |
-| "We need to think about performance" | "What P95 for first paint? **Recommend: under 2s, measured on 4G**" |
-| "Better add error handling" | "When the third party times out, retry or fail outright? **Recommend: 2 retries with exponential backoff, then degrade to the cached result**" |
+| "要考虑安全性" | "同一笔订单重复提交两次，第二次拦在前端还是后端做幂等？**建议后端用 client_request_id 做幂等键，前端同时 disable 按钮**" |
+| "需要注意性能" | "首屏 P95 要压到多少？**建议 2s 内，按 4G 网络算**" |
+| "建议做好错误处理" | "第三方超时后，是重试还是直接失败？**建议重试 2 次、指数退避，仍失败则降级为缓存结果**" |
 
-Write a recommendation as "recommend A because B". Writing "depends on your needs" is not a recommendation.
+建议答案写成"建议 A，因为 B"。写"看你的需求"等于没给。
 
-## Budget and stopping condition
+## 预算与停止条件
 
-**Five questions is a budget ceiling, not a stopping condition.** The real stopping condition is: no high-leverage open points remain.
+**5 题是预算上限，不是停止条件。** 真正的停止条件是：高杠杆的未决点已经清空。
 
-- Asked, and cleared → stop, go to human review
-- Budget spent but high-leverage points remain → **say which remain, why you did not ask, and the risk of each**; never pretend coverage
-- An answer arrives that makes another question pointless → drop it, do not pad the count
+- 问完了、也清空了 → 停，进入人审
+- 预算用完但仍有高杠杆未决项 → **明说剩下哪些、为什么没问、各自的风险**，不要假装已覆盖
+- 中途发现某个答案让别的问题失去意义 → 丢掉它，不用凑数
 
-## The fixed five for recurring outputs
+## 周期产出类的固定五问
 
-For anything that "produces the same kind of conclusion every day" — scheduled push / daily digest / monitor / bot — the five are fixed:
+定时推送 / 日报 / 监控 / 机器人这类"每天产出同一个结论"的东西，五问固定为：
 
-1. **Definition** — what exactly counts as "hot / active / anomalous" (growth? volume? popularity? daily stars?)
-2. **Sources and failure alerting** — where from; and when it is unavailable, silence or an explicit error
-3. **Delivery channel** — where it goes; what that channel constrains
-4. **Timezone and trigger** — which timezone, and will the machine be online then
-5. **Idempotency and re-runs** — does running twice in one day send two messages
+1. **口径**——"最热 / 活跃 / 异常"到底按什么算（涨幅？成交额？人气？日增 star？）
+2. **数据源与失败告警**——从哪取；取不到时是静默还是显式报错
+3. **投递通道**——发到哪；通道本身的限制是什么
+4. **时区与触发**——按哪个时区、机器那时是否在线
+5. **幂等与重跑**——同一天跑两次会不会发两条
 
-**The definition always comes first.** Get it vague and the other four, however well built, produce one wrong answer every day, on time.
+**口径永远排第一。** 它含糊，后面四项做得再好，都是每天准时产出一个错误答案。
