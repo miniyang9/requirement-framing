@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.11.0"
+  version: "0.11.1"
   status: draft
 ---
 
@@ -274,11 +274,27 @@ metadata:
 
 **阶段二做不到怎么办**（要真机、要浏览器、要硬件，agent 没有手）：
 
-1. **先找工具**：浏览器 / 设备 / 桌面自动化的 MCP 或 CLI，或者一条能代替点击的命令
-2. 工具也没有 → **人代执行**，按 `references/human-executed-testing.md` 的协议
-3. 两种情况都要在 `blackbox.md` 里写明「试过什么、为什么没用自动化」
+1. **先枚举可用工具**——不是「找找看」，是**列出来**：我的工具列表里有什么？能不能做串口 / 鼠标 / Jira / 浏览器？没有的话，有没有现成的 MCP 能装？
+2. **数一下有多少条用例需要它**，再决定要不要打扰人：
 
-**人代执行不是放宽**：人带回来的必须有用例编号 + 实际结果 + 证据；只回一句「没问题」记**未验证**，不算通过。人能拒绝——拒绝记 `未覆盖（人拒绝执行：原因）`，项目不因此卡死。
+   | 需求规模 | 怎么办 |
+   |---|---|
+   | 只有 1 条用例 / 只这一次 | **直接人代执行，不问** |
+   | ≥2 条，或本项目还会反复做 | **停下来问一次**（一次问全，不要一条一问）：装 MCP 让 agent 以后自己跑，还是这次先人代 |
+
+3. **装 MCP 是人的活**。选了「装」就是「等外部依赖」——按「依赖缺了先绕后等」处理：先做不依赖它的片，装完回来重跑。
+4. 不管走哪条，`blackbox.md` 里都要写一行 **「工具判断：…」**：
+
+```
+工具判断：需要浏览器自动化
+本轮 6 条生产用例依赖它 → 判为「会反复用」→ 已问，用户选「装」
+```
+
+**数不出来 = 没判过。**
+
+**「不装」不是错。** 装 MCP 是长期投入。规则要保证的是**这个选择明确发生并留痕**，不是逼着装。**「默默人代」才是错**——同一类测试已经人代过两次，第三次还不问，那就是在消耗人。
+
+**走到人代这一步，按 `references/human-executed-testing.md` 的协议交出去。** 人代不是放宽：人带回来的必须有用例编号 + 实际结果 + 证据；只回一句「没问题」记**未验证**，不算通过。人能拒绝——拒绝记 `未覆盖（人拒绝执行：原因）`，项目不因此卡死。
 
 **每次人代执行做完，如果 `references/cases/` 里没有这一类任务，补一篇。** 不补，库永远是空的。
 
