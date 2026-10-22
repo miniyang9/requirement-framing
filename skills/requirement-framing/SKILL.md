@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.14.1"
+  version: "0.14.2"
   status: draft
 ---
 # Requirement Framing
@@ -186,7 +186,16 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 
 ## 第 2 步：L1 展开
 
-产出 `docs/frame/<slug>.md`，顶部先写**四行**：
+**先看地基定了没有**——就是第 1 步问的那条「哪条事实变了，整份 frame 的骨架要重写」。
+
+| 地基 | 这一轮写什么 |
+|---|---|
+| **已定** | 四行头 + §0 + 七项 + `## 待你回答` + 签字块 |
+| **未定** | **只写三样**：四行头、`## 0. 承重事实`（能确认的写，缺的标「未确认」）、`## 待你回答`（地基那条排第一）。七项**留空**，写一句「待地基确认后展开」 |
+
+地基未定就先铺七项，等于把想象写成结构——**展开得越全，返工越大**。这不是建议：**地基未定时的展开，算越线。**
+
+地基已定时，产出 `docs/frame/<slug>.md`，顶部先写**四行**：
 
 ```
 状态：待答
