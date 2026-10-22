@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.15.0"
+  version: "0.15.1"
   status: draft
 ---
 # Requirement Framing
@@ -52,7 +52,7 @@ frame 文档顶部必须有 `状态：`。
 
 1. **文档存在 ≠ 已签**——上一轮留下的默认"待签"
 2. **用户提问 ≠ 用户批准**——他是在问你，不是给你开工许可
-3. **范围方案必须落定**：带「（待选）」或三项全列 → 不能签
+3. **范围方案必须落定，外部依赖表必须存在**：带「（待选）」或三项全列 → 不能签；没有 `## 外部依赖` 一节 → 不能签（没有就写「无」）
 4. **已签只授权 frame 里写明的范围**——加需求、扩范围都是新的未知，先回退再谈
 5. **签字由人决定，落地可以由你执行**——用户明确说"签"之后，你改状态、填签字块，并如实写明**签字人 + 时间**。禁止的是：**没有人明确表态**你自己写上去；或把"另一个 agent 的确认"当作用户确认
 6. **新未知先分类**：用户决策 → 重开问题、状态回退"待签"；待查事实（探针能查）→ 写成 §0 承重事实，**不卡签字**
@@ -217,6 +217,18 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 6. **失败预演** — 三个死法 + 最早信号 + 对策
 7. **验收标准** — 每条一句「什么算通过」，**必须带阈值**（数字或布尔）。只写能从外部观察到的结果：写「三份表拼完，行数与三份之和相等」，不写「实现了合并」——后者是过程，不是验收
 
+最后必须有一节 **`## 外部依赖（需要你提供）`**——**没有就写「无」，不许省这一节**：
+
+| 项 | 谁提供 | 最晚何时 | 状态 | 没它会挡住什么 |
+|---|---|---|---|---|
+| 境外云服务器 | 你 | 第 3 片前 | 不可用 | 部署与 HTTPS 无法真机验证 |
+
+- 只列**只有人能提供的**：账号、资源、资质、外部授权、真实数据。代码自己能做的不列
+- **「可用」只能由探针写**。人说"我给你个服务器 IP"，不等于可用——要真连上、真跑一条命令，把探针写进状态栏：`可用 · 2026-10-23 · SSH 通，uname → Linux 6.1`
+- **签这一份 = 你认领这几项**：谁提供、最晚何时，当面认下来
+
+**资格类当场验，资源类留到用的时候验。** "个人主体能不能做支付""牌类要不要版号"——这类不成立就要改方案，验了再往下写。服务器、域名这类资源现在验不出东西（还没买），列进表里即可。
+
 **提问前先读 `references/questioning.md`**：三分类决定问谁、一次只问一题、每题带立场明确的建议答案。最多 5 题。
 
 **T2 的 frame 同样以 `## 待你回答` 和签字块两节结尾**——展开清单是内容，这两节是接口，不能省。
@@ -225,9 +237,9 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 
 ## 第 3 步：人审与收缩
 
-用户做**四件事**：划掉不适用的、纠正 `[推断]`、答问、**选范围方案**。
+用户做**五件事**：划掉不适用的、纠正 `[推断]`、答问、**选范围方案**、**认领外部依赖**（谁提供、最晚何时）。
 
-**签字确认的对象是三样**：`## 待你回答` 里那几条的答案、体量档、范围方案。范围之外的东西签不下来——那属于扩范围。
+**签字确认的对象是四样**：`## 待你回答` 里那几条的答案、体量档、范围方案、`## 外部依赖` 里那几项的归属和最晚时间。范围之外的东西签不下来——那属于扩范围。
 
 **签字是一次提交，不是三轮提问。** 四件事可以一次给全——「一次只问一题」约束的是**提问**，不是**提交**。把几个决策塞进一道题里再自认违规，是没分清这两种交互。
 

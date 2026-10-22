@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.4.3"
+  version: "0.5.0"
   status: draft
 ---
 
@@ -36,6 +36,27 @@ metadata:
 **三个失败信号连着来，很可能一个都不成立。** 把「环境不支持」当成既定事实，代价是去手写本该直接用的东西——真实案例里，为此手写了 191 行 WebSocket，而 `npm install ws` 只要 1 秒。
 
 
+## 第一次进 C：全面盘点外部依赖
+
+门禁过了之后，**先盘点一次，再选第一片**。只做一次；之后每片只验自己用到的那几项。
+
+1. 读 frame 的 `## 外部依赖`
+2. 逐项标：**可用** / 不可用 / 还不能验
+3. 不可用的，问清「最晚何时能给」
+4. 据此排出「现在能做哪些片」
+
+**「可用」不能采信声明。** 人说"服务器 IP 是 1.2.3.4"，你得真连一次：
+
+| 依赖 | 探针 |
+|---|---|
+| 服务器 | SSH 或端口连通 **+ 真跑一条命令**，把输出写进状态 |
+| 域名 | 解析到预期 IP + HTTPS 能握手 |
+| 数据库 | 连一次 + 建表 + 删表 |
+| 样例数据 | 真读一次，字段齐不齐 |
+| 账号 / API | 真调一次，看返回码 |
+
+盘点结果回写进 frame 那几行的 `状态` 栏（带探针和日期），然后在回复第一段说清：**能做哪些、卡在哪、什么时候解。**
+
 ## 核心循环（五步）
 
 ```
@@ -66,6 +87,19 @@ metadata:
 判据不是「人够不够」——agent 永远够。是**边界切不切得开**。
 
 不许一次挑两片「顺手一起做」。
+
+**被外部依赖挡住怎么办**
+
+三条同时成立才允许跳过这一片、去做后面的：
+
+1. 缺的是**外部依赖**（服务器、域名、样例数据），不是"前一片还没写"——缺代码依赖说明切片判错了，回选片重切
+2. 后面存在**不依赖这一片产出**的片
+3. 跳过的**不是 L5 骨架片**——骨架只能等，不能跳。它的作用就是尽早证伪设计
+
+跳 → 台账写 `没做：等 X（最晚 <日期>）`、`下次：X 到位后先做第 N 片`
+不跳 → 停下，说明为什么不能跳（通常是没有别的片可做）
+
+**连续跳过要在同一句里报告**：`第 3、4 片被 X/Y 挡住，现在做第 5 片`。不许默默跳到后面——那会让台账看起来进度诡异。
 
 ### 2 写
 
@@ -160,6 +194,8 @@ metadata:
 
 缺口 → 回 `solution-design` 补设计（不回 `requirement-framing`，也不就地改）。
 
+**有被跳过的片 → 直接判不能交付**，不用再算五项——台账里那条 `等 X` 本身就是缺口。
+
 **五项全过 → 先把台账顶部的状态改成 `已交付`，再在末尾写一节：**
 
 ```
@@ -178,6 +214,7 @@ metadata:
 
 - **执行中不改「约定」，只更新「指针」。** 唯一写者 / 封闭集合 / 不变量——不许动；`待落地 → 已落地`——每片必更。缺口回 `solution-design`；需求变了回 `requirement-framing`。
 - **一次一片。** 两片并行，等于两片都没验。
+- **依赖缺了先绕后等。** 骨架片不饶；缺代码依赖不许绕（那是切片错）。
 - **收敛每片重跑，写进这一片。** 不写独立章节——独立章节是快照，一定会和事实脱钩。
 - **收尾必写返工理由。** 没有返工也要写"无"。
 

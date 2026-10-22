@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.6.0"
+  version: "0.6.1"
   status: draft
 ---
 
@@ -32,6 +32,8 @@ metadata:
 | 5 | **没有未关闭的 `UPSTREAM-xx`**（关闭办法见「上游异议」） | 先关闭，不许带病设计 |
 | 6 | 签字块三字段齐：`签字人` / `签字日期`（可解析）/ `版本` | 退回 `requirement-framing` 补签字块 |
 | 7 | 每条承重事实带四类来源之一（`[你说过]`/`[推断]`/`[代码]`/`[外部]`）；T1 走等效物时不强求 | 退回补来源 |
+
+**有一条额外的验：会改变 01 结构的外部依赖，必须在 B 验掉。** 判据——"如果这条依赖不成立，01 的分层/契约数量/顺序会变吗？"会变（比如没有 SMTP 中继，notify 就不是"发提醒"而是"生成清单"），就先去探一次；探不了就记一条 `UPSTREAM`，不许按猜的往下设计。
 
 **手写的 frame 也要过这七条。** "看起来完整"不是通过条件——`requirement-framing` 的第 4 步自检是它的承诺，不是你的验收；两边各做一次。
 
