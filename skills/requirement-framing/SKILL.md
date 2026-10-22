@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.12.2"
+  version: "0.12.3"
   status: draft
 ---
 # Requirement Framing
@@ -40,11 +40,13 @@ metadata:
 
 frame 文档顶部必须有 `状态：`。
 
-| 状态 | 允许的动作 |
-|---|---|
-| **待答** | 只读、提问 |
-| **待签** | 只读；可写回文档本身 |
-| **已签** | 可以开工（本 skill 范围内：可以交付） |
+| 状态 | 可写 | 禁止写 |
+|---|---|---|
+| **待答** | **只写自己这一份 frame**（`docs/frame/<slug>.md`）；只读探查 | 代码 / 脚手架 / 配置样例 / 部署脚本 / 项目目录 / 依赖 |
+| **待签** | 同上，再加：把用户的回答回写进 frame | 同上 |
+| **已签** | 开工（范围限于 frame 写明的） | 超出 frame 写明的范围 |
+
+**写 frame 不是越权，是这一步的产出。** 除了它，`待答` / `待签` 期间不碰任何会运行的东西。
 
 **七条判据，缺一不能签：**
 
@@ -63,7 +65,7 @@ frame 文档顶部必须有 `状态：`。
 ```
 体量档：T0 / T1 / T2 / 待定（缺：<什么才能定>）
 未决：Q1 …／Q2 …（没有写"无"；第一条常常就是知识缺口——项目在哪、哪个模块）
-承诺：在收到这些回答前，我不会创建任何文件。
+承诺：在收到这些回答前，我只写 `docs/frame/<slug>.md`，不创建任何可执行产物。
 ```
 
 **绑定的是动作，不是"第几条消息"。** 只读探查（读文件、列目录、grep）不算对外动作，可以先读再报——那时"待定"可能已经变成具体档位，更好。
@@ -119,7 +121,16 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 
 **T1 减配的是展开量，不是授权。** 它照样产出 `docs/frame/<slug>.md`，照样要有 `状态：已签`，只是内容从六件套缩到五问、不写 §0。
 
-**不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以必须**写进 frame 头部**、随签字一并确认。没有 frame 的降档 = 越权。
+**不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以：
+
+- **T1 / T2** → 档位写进 frame 头部，随签字一并确认
+- **T0** 不建档（它本来就不启动流程），但**动手前必须输出这一行**：
+
+```
+T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契约
+```
+
+三个条件逐条为真才算 T0；少一条就升到 T1。**跳过这一行直接动手 = 越权。**
 
 ### 三个轴，别混
 
@@ -221,6 +232,14 @@ T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T
 - 你的交付物是"**一份可签的东西**"，不是一个聪明的建议
 
 判据：**能被签字的产物 > 一个聪明的回答。**
+
+**你的完成态是「待签 + 已交回」，不是「已签」。** 交回的消息里必须有三样：
+
+1. frame 的路径
+2. 还差哪些回答（逐条列出，标出哪条是事实、哪条是决策）
+3. 一句「需要人类签字」
+
+拿到这三样，父 agent 或人类的下一步才明确。**你不需要、也不允许等到状态变成 `已签` 才算完成任务。**
 
 
 ## 产出物

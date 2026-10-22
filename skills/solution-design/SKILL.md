@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (Status: signed) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.4.2"
+  version: "0.4.3"
   status: draft
 ---
 
@@ -29,7 +29,7 @@ metadata:
 | 2 | `## 0. 承重事实` 至少一条，且每条带锚点。**体量档是 T1 时可接受等效物**：§4 最大歧义 + §3 不做清单齐备（T1 按 A 的减配条款不写 §0） | 退回 `requirement-framing` 补 §0；或把 T1 改成 T2 |
 | 3 | 头部四行齐：`状态` / `体量档` / `范围方案` / `执行档`，且**不带"（待确认）"** | 退回 `requirement-framing` 补 |
 | 4 | "不做"的条目带了理由 | 退回 `requirement-framing` 补理由 |
-| 5 | **没有未关闭的 `UPSTREAM-xx`** | 先解决，不许带病设计 |
+| 5 | **没有未关闭的 `UPSTREAM-xx`**（关闭办法见「上游异议」） | 先关闭，不许带病设计 |
 
 **手写的 frame 也要过这五条。** "看起来完整"不是通过条件——`requirement-framing` 的第 4 步自检是它的承诺，不是你的验收；两边各做一次。
 
@@ -41,6 +41,15 @@ metadata:
 - 在 `03-decisions.md` 记一条 `UPSTREAM-01`：哪条判错、依据、建议改成什么
 - **交付时明确告知用户**："这条需要回 `requirement-framing` 重签"
 - 若这条异议会改变 01 的结构（边界、契约数量、顺序）→ **先解决再继续**，不许带病设计
+
+**异议有 open / closed 两个状态，关闭只有两条路：**
+
+| 关闭方式 | 怎么写 |
+|---|---|
+| 用户回 `requirement-framing` 重签了 frame，你复核通过 | 在该条后追加 `closed: <日期> 已重签，复核通过` |
+| 用户明确说不改、接受现状 | 在该条后追加 `closed: <日期> 用户接受现状` |
+
+**你不能自己关。** 没人处理就一直挂着——体检第 5 条会一直拦你，这是设计如此：**带着未决异议往下设计，等于把风险焊进架构。**
 
 **没有 frame 时**：不许"先讨论一下架构再说"。哪怕用户直接问"该怎么分层"，也先退回 L1——否则你设计的是一份口头需求的架构。
 
