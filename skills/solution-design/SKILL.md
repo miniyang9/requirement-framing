@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.7.1"
+  version: "0.7.2"
   status: draft
 ---
 
@@ -136,6 +136,12 @@ metadata:
 **"否决了什么"不能省**——它挡住的是六周后你自己把已否掉的方案重新提出来。
 
 不写故事，不写背景铺垫。
+
+**ADR 的边界：它只给「frame 没覆盖的」决定用。**
+
+如果这条决定的改动对象**出现在 frame 的 §0 承重事实或 §4 决策点里**，那它不是设计决策，是**需求变更** → 停，回 `requirement-framing` 改 frame、重签。
+
+**探针：ADR 里一旦写出「覆盖 frame X」这种字样，就是越线信号。** 它说明你正在用一条 ADR 改需求，而需求改动需要有人重新签字。
 
 ## 第 4 步：L5 骨架判据
 

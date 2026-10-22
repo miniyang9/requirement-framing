@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.8.2"
+  version: "0.9.0"
   status: draft
 ---
 
@@ -22,6 +22,16 @@ metadata:
 4. **要派发时**：本片依赖的那几条契约必须已冻结（有版本号、写者不许改）。没冻结就派发 = 两个人对同一份约定各写各的。
 
 **缺设计产物**（01/02/03、冻结行）→ 退回 `solution-design`；**frame 未签** → 退回 `requirement-framing`。两条路不要合并。设计不全时开工，等于把缺口留给未来的自己。
+
+## 接手已有项目：先补一次 arch 复审
+
+如果 `docs/arch/<slug>/review.md` **不存在**（项目是在这条规则之前开的），**在正式做下一片之前先补一次 arch 复审**。
+
+- 复审对象是**现有的** 01 / 02 / 03 **和 frame**
+- 结果写 `docs/arch/<slug>/review.md`，末行 `状态：已关闭（N 轮，阻断 0）`
+- 补审发现的问题按「人类裁决之后」那张表处理
+
+**不补，这个项目就永远缺这一次审**——arch 复审的触发点是「骨架收敛后」，那早就过去了。
 
 ## 开工前：环境假设要实测
 
@@ -308,7 +318,7 @@ metadata:
 
 **谁审**：新 subagent，只给四条路径（01 / 02 / 03 / frame）+ 下面清单。**不给你的思路、不给对话历史、不给"重点看哪里"。**
 
-**审十项：**
+**审十一项：**
 
 1. **五个问题**：每问给的是"选了哪个、为什么"，还是写成了教程？
 2. **契约**：每条有唯一写者？约定栏装的是代码表达不了的东西（不变量 / 封闭集合 / 错误码）？形状栏还写着"待落地"但其实已经能指向代码了吗？
@@ -320,8 +330,9 @@ metadata:
 8. **交叉一致**：01 的契约清单 ↔ 02 的索引 ↔ 03 的 ADR 能对上吗？有没有"01 说做了、03 说否决了"？
 9. **骨架实测 vs 01 的判据**：01 说骨架会验出什么，实际跑出来是什么？对不上 → 要么改 01，要么说明设计既没被证伪也没被证实。
 10. **执行期发现有没有回写**：跑骨架时发现的契约不足 / 边界错，写进 02/03 了吗？还是只改了代码？
+11. **对 frame**：01/02 的假设还对得上 frame 的 §0 和 §4 吗？有没有承重事实被推翻、决策点被改写，却没回 L1 重签的？（真实案例：部署从「境外 + 域名」改成「大陆纯 IP + 自签」，只写了一条 ADR，frame 里十二处仍是旧口径，其中一条承重事实已经失效。）
 
-第 9、10 项是"在骨架之后审"的全部价值——它把文档审阅变成了设计验证。
+第 9、10 项是「在骨架之后审」的价值；第 11 项是**回去对签字的那份需求**——设计可以变，但变了就得有人重新签字。
 
 **记在哪**：`docs/arch/<slug>/review.md`（和 01–03 同目录，**不编号**，免得被当成第四份设计）。末行必须有状态：
 
@@ -379,6 +390,7 @@ metadata:
 - **执行中不改「约定」，只更新「指针」。** 唯一写者 / 封闭集合 / 不变量——不许动；`待落地 → 已落地`——每片必更。缺口回 `solution-design`；需求变了回 `requirement-framing`。
 - **一次一片。** 两片并行，等于两片都没验。
 - **依赖缺了先绕后等。** 骨架片不饶；缺代码依赖不许绕（那是切片错）。
+- **改 frame 覆盖过的东西 = 改需求。** frame 的 §0 承重事实 / §4 决策点里有的，不许在这里或 03 里「覆盖」——回 `requirement-framing` 重签。**ADR 里写出「覆盖 frame」就是越线信号。**
 - **收敛每片重跑，写进这一片。** 不写独立章节——独立章节是快照，一定会和事实脱钩。
 - **收尾必写返工理由。** 没有返工也要写"无"。
 
