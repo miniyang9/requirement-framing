@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.4.1"
+  version: "0.4.2"
   status: draft
 ---
 
@@ -109,7 +109,19 @@ metadata:
 返工：无 / <七类之一 + 一句话>
 ```
 
-七类：理解 / 假设 / 验收不可测 / 切分丢约束 / 上下文丢失 / 实现跑偏 / **越线（签字前开工，指没签就开工）**。
+**返工理由分七类**（硬字段，发生时必填）：
+
+| 类 | 什么时候填 | 回哪 |
+|---|---|---|
+| 理解 | 需求里某句读错了，后来才发现 | 回 `requirement-framing`（需求要改写） |
+| 假设 | 用了一个没验证的前提 | 就地——把假设变成事实，再验一次 |
+| 验收不可测 | 01 的验收判据写不出证据 | 回 `solution-design` |
+| 切分丢约束 | 切片时漏了 01/02 的某条约束 | 回选片，重新切 |
+| 上下文丢失 | 换了会话，忘了前面定过的约定 | 读台账 + 相关契约重建；**不重做** |
+| 实现跑偏 | 代码和设计不符，设计本身没错 | 就地重写那一段 |
+| 越线 | 签字前就开工了 | 回 `requirement-framing`，先补签 |
+
+**填了类目就知道下一步去哪**——这张表是判据，不是标签。
 
 **返工理由是硬字段。** 没有它，三个月后你不知道偏差通常发生在哪一跳。
 
