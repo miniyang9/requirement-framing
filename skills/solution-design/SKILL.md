@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.5.1"
+  version: "0.5.2"
   status: draft
 ---
 
@@ -191,10 +191,10 @@ S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
 docs/arch/<slug>/01-architecture.md  # 首行 `frame: docs/frame/<slug>.md`；五问 + 嵌图 + L5 + 验收 + 落盘形状
 docs/arch/<slug>/02-contracts.md     # 契约索引：形状（落地后指向代码）+ 约定（永久）
 docs/arch/<slug>/03-decisions.md     # 一行一条，带编号与否决项
-docs/arch/diagrams/<slug>/<view>.json  # 每个视图一份源（可 diff）
-docs/arch/diagrams/<slug>/render.*     # 渲染器（不许放 .tmp）
-docs/arch/diagrams/<slug>/<view>.png   # 生成物，嵌进 01
-docs/arch/diagrams/<slug>/<view>.html  # 生成物，交互版
+docs/arch/<slug>/diagrams/<view>.json  # 每个视图一份源（可 diff）
+docs/arch/<slug>/diagrams/render.*     # 渲染器（不许放 .tmp）
+docs/arch/<slug>/diagrams/<view>.png   # 生成物，嵌进 01
+docs/arch/<slug>/diagrams/<view>.html  # 生成物，交互版
 ```
 
 三份都要能独立读懂——它们是 `incremental-delivery` 的输入。

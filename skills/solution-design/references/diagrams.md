@@ -23,8 +23,8 @@
 
 **图必须有一份可重建的路径 = 源 + 渲染器 + 命令。**
 
-- **源**：`docs/arch/diagrams/<slug>/<view>.json`（每视图一份，可 diff）
-- **渲染器**：`docs/arch/diagrams/<slug>/render.*` 或一条写明的命令——**不许放 `.tmp/`**（那是给一次性探针的）
+- **源**：`docs/arch/<slug>/diagrams/<view>.json`（每视图一份，可 diff）
+- **渲染器**：`docs/arch/<slug>/diagrams/render.*` 或一条写明的命令——**不许放 `.tmp/`**（那是给一次性探针的）
 - **产物**：`<view>.png` 嵌进 01，`<view>.html` 给交互
 
 缺一样都不算"有源"。手绘的图等于没有图——不能重建、会和正文矛盾、也没人知道哪份是对的。
