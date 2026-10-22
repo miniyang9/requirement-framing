@@ -30,7 +30,7 @@ metadata:
 | 想验 | 可靠做法 | 容易误判的做法 |
 |---|---|---|
 | 有没有网 | `node -e "fetch('https://…').then(r=>console.log(r.status))"` | `curl`——Windows 上走 Schannel，可能与你无关地失败（返回 `000`） |
-| 能不能装包 | 先把缓存指进工作区：`npm_config_cache=<工作区>/.npm-cache` | 直接 `npm i`——缓存默认在 `%LOCALAPPDATA%`，在工作区外会被沙箱拦成 `EPERM` |
+| 能不能装包 | 项目根写一行 `.npmrc`：`cache=.npm-cache`（缓存必须在工作区内） | 直接 `npm i`——缓存默认在 `%LOCALAPPDATA%`，在工作区外会被沙箱拦成 `EPERM`；也别指望用户级变量，沙箱临时目录每个 session 都变 |
 | 能不能跑测试 | 直接跑测试文件 | `node --test`——它 spawn 子进程，被沙箱拦 |
 
 **三个失败信号连着来，很可能一个都不成立。** 把「环境不支持」当成既定事实，代价是去手写本该直接用的东西——真实案例里，为此手写了 191 行 WebSocket，而 `npm install ws` 只要 1 秒。
