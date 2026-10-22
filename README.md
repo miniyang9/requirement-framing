@@ -36,7 +36,7 @@
 第 0 步  领域闸门      会重复运行吗？不是 → 退化
 第 1 步  定体量档      T0 直接做 / T1 一页五问 / T2 走完 L1
 第 2 步  L1 展开       展开清单（七项）+ ≤5 个问题（禁止任务列表）
-第 3 步  人审签字      划掉 / 纠正 [推断] / 答问 / 选范围方案 / 确认执行档
+第 3 步  人审签字      划掉 / 纠正 [推断] / 答问 / 选范围方案
 第 4 步  检查交付物    frame 的 §0 承重事实是否写全
 第 5 步  交棒          指向下游：已签的 frame 就是输入
 ```
@@ -46,7 +46,7 @@
 ```
 requirement-framing/
 ├── skills/requirement-framing/   # A：L1 立项
-│   ├── SKILL.md              # 主干：信条 + 门禁 + 闸门 + 体量档 + L1 + 交棒 + 指针
+│   ├── SKILL.md              # 主干：信条 + 门禁 + 领域判定 + 体量档 + L1 + 交棒 + 指针
 │   └── references/           # 细则，按需读取
 │       ├── questioning.md    # 提问纪律：三分类 / 一题一问 / 质量门 / 周期五问
 │       ├── cross-sections.md # 17 项横切面 + 五角色第二遍
@@ -55,14 +55,14 @@ requirement-framing/
 ├── skills/solution-design/   # B：L2–L5 架构 / 契约 / 决策 / 骨架判据
 │   ├── SKILL.md              # 门禁（读已签 frame）+ 五个架构问题 + 契约判据 + 交棒
 │   └── references/
-│       ├── contracts.md      # 六个契约 / 桩 / 单人等价物
-│       ├── modes.md          # S/M 判定 + L2–L5 逐级对照
+│       ├── contracts.md      # 六个契约 / 桩 / 02 索引规则
 │       ├── diagrams.md       # 视图选择 + 可重建路径
 │       └── change-propagation.md  # 变更传播 / 解冻 / 交付前三查
-├── skills/incremental-delivery/  # C：执行（选片/写/验/收尾/收敛），只实现 S 档
+├── skills/incremental-delivery/  # C：执行（选片/写/验/收尾/收敛）
 │   ├── SKILL.md
-│   └── references/workmode.md    # S/M 逐环节对照
-├── staging/dispatch/         # C 的 M 档素材，不安装
+│   └── references/
+│       ├── workmode.md       # 串行 / 派发 逐环节对照
+│       └── dispatch.md       # 派发：任务卡 / 星形 DAG / 契约符合性检查 / 合并
 ├── scripts/check.mjs         # 仓库自检：BOM / frontmatter / 指针 / 孤儿 / 行尾 / 计数
 ├── CHANGELOG.md
 ├── LICENSE
@@ -75,15 +75,12 @@ requirement-framing/
 |---|---|
 | L1 立项 | **`requirement-framing`** |
 | L2 架构 · L3 契约 · L4 决策 · L5 骨架 | **`solution-design`** |
-| 执行：选片 / 写 / 验 / 收尾 | **`incremental-delivery`**（只实现 S 档） |
-| 多写者派发 | 未实现，素材在 `staging/dispatch/` |
+| 执行（串行或派发） | **`incremental-delivery`** |
 | L6 切片 · L7 执行 | **`incremental-delivery`**（切片判据来自 L2/L3，见 `solution-design`） |
 
 **为什么拆**：需求展开和架构设计的**触发时机不同**——"我还没想清楚要做什么" vs "我知道要做什么，不知道该怎么拆"。一个 skill 只有一个 description，混在一起会让两类场景都半准不准。
 
-**为什么派发不单独成 skill**：新建 skill 要过四条判据（触发时机不同 · 产物能独立验收 · 签字主体不同 · 内容量撑得起）。派发那一段前三条过、第四条不过，所以它是 `incremental-delivery` 的 M 档，不另立门户。
-
-**什么时候补 M 档**：见 `staging/dispatch/README.md` 的触发条件——核心信号是出现 ≥2 个能同时开工、且各自能独立验收的并行面。
+**为什么派发不单独成 skill**：新建 skill 要过四条判据（触发时机不同 · 产物能独立验收 · 签字主体不同 · 内容量撑得起）。派发那一段前三条过、第四条不过，所以它在 `incremental-delivery` 里实现，不另立门户。
 
 ## 为什么主干短、细则外置
 

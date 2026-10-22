@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.5.2"
+  version: "0.6.0"
   status: draft
 ---
 
@@ -27,17 +27,22 @@ metadata:
 |---|---|---|
 | 1 | `状态：已签` | 退回 `requirement-framing` 签字 |
 | 2 | `## 0. 承重事实` 至少一条，且每条带锚点。**体量档是 T1 时可接受等效物**：五问里的「最大歧义」与「不做」两节齐备（T1 按 `requirement-framing` 的减配条款不写 §0） | 退回 `requirement-framing` 补 §0；或把 T1 改成 T2 |
-| 3 | 头部四行齐，且**两轴都已落定**：`范围方案` ∈ {最小, 正规, 平台化}（不含「待选」、不是三项全列）；`执行档` 不含「（待确认）」 | 退回 `requirement-framing` 补 |
+| 3 | 头部三行齐，且 `范围方案` ∈ {最小, 正规, 平台化}（不含「待选」、不是三项全列） | 退回 `requirement-framing` 补 |
 | 4 | "不做"的条目带了理由 | 退回 `requirement-framing` 补理由 |
 | 5 | **没有未关闭的 `UPSTREAM-xx`**（关闭办法见「上游异议」） | 先关闭，不许带病设计 |
 | 6 | 签字块三字段齐：`签字人` / `签字日期`（可解析）/ `版本` | 退回 `requirement-framing` 补签字块 |
 | 7 | 每条承重事实带四类来源之一（`[你说过]`/`[推断]`/`[代码]`/`[外部]`）；T1 走等效物时不强求 | 退回补来源 |
 
-**手写的 frame 也要过这五条。** "看起来完整"不是通过条件——`requirement-framing` 的第 4 步自检是它的承诺，不是你的验收；两边各做一次。
+**手写的 frame 也要过这七条。** "看起来完整"不是通过条件——`requirement-framing` 的第 4 步自检是它的承诺，不是你的验收；两边各做一次。
 
 ### 上游异议：发现 `requirement-framing` 判错了怎么办
 
-在 L2 你可能会发现上游判定有误（例如实际有两个写者，执行档应为 M）。
+在 L2 你可能会发现上游判定有误。最常见的两种：
+
+- **体量档判小了**：frame 判 T1，但它实际跨三个可独立验收的单元——五问压不住，§0 也没写。
+- **范围方案和验收打架**：frame 选了「最小」，但验收里要的东西只有「正规」才有。
+
+处理方式：
 
 - **不许改 frame**（那是 `requirement-framing` 的产物，签字主体不同）
 - 在 `03-decisions.md` 记一条 `UPSTREAM-01`：哪条判错、依据、建议改成什么
@@ -57,13 +62,15 @@ metadata:
 
 **例外**：用户明说只是"概念咨询、不入库"，那就当咨询答，不进流程，也不产出 `docs/arch/`。
 
-## 三个轴沿用，不重定
+## 两个轴沿用，不重定
 
-体量档、范围方案、执行档在 L1 已经定了。这里只**消费**：
+体量档、范围方案在 L1 已经定了。这里只**消费**：
 
-- **执行档**决定后面几级取哪一列（S：1–3 视图 / 代码类型；M：分层文档 / 契约版本）——**判定规则与逐级对照见 `references/modes.md`**
 - **体量档**决定要不要全走（T1 通常只走一部分）
 - 想改任何一个轴 → 回 `requirement-framing` 改 frame，不要在这里偷偷调整
+
+> **设计做多深，是这里自己判断的，不是从上游读来的。** 四个判断各有触发点，长在对应步骤旁边：
+> 图怎么分（第 1 步）、契约怎么写（第 2 步）、决策记多细（第 4 步）、骨架放哪（第 4 步，那张后果成本表）。
 
 ## 第 1 步：L2 架构 —— 五个问题
 
@@ -87,12 +94,12 @@ metadata:
 
 > **会被两个以上单元同时读写的东西，必须是契约；其余不该是。**
 
-**先把两个词分开**：*契约*是那份约定，*契约文档*是记录它的文件。**S 档照样要定契约**，只是契约长在代码里——不是"不需要定义"。
+**先把两个词分开**：*契约*是那份约定，*契约文档*是记录它的文件。**契约一定有，02 一定存在**——只是形状长在代码里，02 记指针和约定。
 
 三条硬规矩：
 
 - **每个契约一个唯一写者**，其余只读——这是唯一能防"热心地各自改接口"的结构性手段
-- **S 档写成代码里的类型**（编译器替你守）；**M 档写成文档 + 版本号**（没人替你守了）
+- **形状写成代码里的类型**（编译器替你守）；**约定写成 02 的条目**（代码守不住的那些）
 - **冻结时机**：第一个消费者要开工之前，不是"设计全部完成之后"
 
 **02 从第一天就写成索引，不写字段。** 文件开头必须先有冻结行：
@@ -171,7 +178,7 @@ S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
 |---|---|---|
 | L2–L5 | **本 skill** | 架构一页 + 契约 + 决策记录 |
 | 执行（选片 / 写 / 验 / 收尾） | `incremental-delivery` | 每片五行台账（做了 / 没做 / 下次 / 证据 / 返工） |
-| 多写者派发 | `incremental-delivery` 的 M 档（**未实现**） | 任务卡 |
+| 并行片（判得出 ≥2 条不相交的线） | `incremental-delivery` | 任务卡 |
 
 **本 skill 不产出任务卡。** 用户要"把它拆成任务"时，说明该进 `incremental-delivery` 了。
 

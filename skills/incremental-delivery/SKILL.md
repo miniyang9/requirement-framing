@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.3.2"
+  version: "0.4.0"
   status: draft
 ---
 
@@ -12,23 +12,16 @@ metadata:
 上游是 `solution-design`，输入是 01 / 02 / 03。
 本 skill 把设计变成**一串能独立验收的增量**，每做完一片落一次账。
 
-**它不是派发 skill。** 派发只是它在多写者下的一半；本版只实现单人档。
+**它既做串行，也做派发。** 派发不是更高的一档，而是同一步骤在边界切得开时的做法——判据见「选片」。
 
-## 门禁：三件齐 + 已冻 + 复核执行档
+## 门禁：三件齐 + 已冻 + 已签
 
 1. `docs/arch/<slug>/` 下 01 / 02 / 03 齐，且 01 首行写着 `frame: docs/frame/<slug>.md`
 2. 02 开头有冻结行：`冻结：<日期>    冻结人：<角色>`
 3. **frame 是已签的**：`状态：已签`，且签字块三字段齐（签字人 / 签字日期 / 版本）。**没有签字的设计不许开工。**
-4. **复核执行档**：读 **frame 头部的 `执行档`**（执行档只有一个来源，不读 01），再看现在实际有几个写者。
+4. **要派发时**：本片依赖的那几条契约必须已冻结（有版本号、写者不许改）。没冻结就派发 = 两个人对同一份约定各写各的。
 
-| 实际情况 | frame 写的是 | 动作 |
-|---|---|---|
-| 一个写者 | S | 继续 |
-| 多个写者 | M | 本版不支持 → **停**，说明 `incremental-delivery` 的 M 档未实现 |
-| 多个写者 | S | **停**，回 `requirement-framing` 改 frame，再重走 `solution-design` |
-| 一个写者 | M | **停**，同上——不要自己降档 |
-
-**缺设计产物**（01/02/03、冻结行、签字）→ 退回 `solution-design`；**执行档不一致** → 退回 `requirement-framing` 改 frame（`solution-design` 无权改 frame）。两条路不要合并。 设计不全时开工，等于把缺口留给未来的自己。
+**缺设计产物**（01/02/03、冻结行）→ 退回 `solution-design`；**frame 未签** → 退回 `requirement-framing`。两条路不要合并。设计不全时开工，等于把缺口留给未来的自己。
 
 ## 核心循环（五步）
 
@@ -46,11 +39,24 @@ metadata:
 - 优先级：先做能证伪设计的（骨架优先），再做补全
 - 若 01 写明 L5 合并进第一片，**第一片就是那个骨架**
 
-不许一次挑两片"顺手一起做"。
+**切好之后，再判这一片能不能并行。** 问：能不能拆成 2 条以上互不相交、各自可验收的线？
+
+三条同时成立才拆：
+
+1. **路径不相交**——各条改的文件/目录不重叠
+2. **各有独立验收判据**——不许「等对方完成才能验」
+3. **每片装得进一个上下文**——按读写文件数估过
+
+能 → **先冻结本片依赖的契约**（加版本号），再按 `references/dispatch.md` 派发
+不能 → 自己串行做完
+
+判据不是「人够不够」——agent 永远够。是**边界切不切得开**。
+
+不许一次挑两片「顺手一起做」。
 
 ### 2 写
 
-自己写。三条规矩：
+**串行就自己写；派发就按任务卡派**（见 `references/dispatch.md`）。三条规矩对两者都成立：
 
 - **不许改契约**——02 里的唯一写者、封闭集合、不变量。**允许**：写实现、加实现内部字段、把 `待落地` 更新成 `已落地 → 文件:行`
 - 契约不足 → **停**，记一笔，回 `solution-design`；不许就地扩字段
@@ -83,7 +89,7 @@ metadata:
 
 **本片让哪个契约落地了？** 有 → 去 `02-contracts.md` 把那一行的 `待落地` 改成 `已落地 → 文件:行`。这是唯一需要动设计文档的时刻，别攒着——攒着就一定会忘。
 
-S 档的 review 就在这一步：把产物 + 验收结果交给一个**新会话（无前序上下文）**，只问"满足规格吗？哪里不对？"
+串行时的 review 就在这一步：把产物 + 验收结果交给一个**新会话（无前序上下文）**，只问「满足规格吗？哪里不对？」
 
 **顺序是 review → 台账，不是反过来。** 反过来，台账记的是"我做了什么"，而不是"别人验过什么"。review 的结论和证据写进那一行 `证据：`。
 
@@ -109,7 +115,7 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**新会�
 
 **没有这一节，就没有"完成"这个状态**——所有参与方都不知道该停在哪。
 
-> **S 档与 M 档在每一环的差别** → 读 `references/workmode.md`。复核执行档之前必读。
+> **串行与派发在每一环的差别** → 读 `references/workmode.md`。选片之前必读。
 
 ## 铁律
 

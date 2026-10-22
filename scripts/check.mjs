@@ -117,6 +117,19 @@ for (const { name, dir } of skillDirs) {
   }
 }
 
+// ---- 术语守卫：这些词是删掉的概念，不许回流 ----
+{
+  const BANNED = ["执行档", "S 档", "M 档", "三轴", "严谨度", "modes.md"];
+  for (const { name, dir } of skillDirs) {
+    for (const p of walk(dir)) {
+      const text = read(p);
+      for (const w of BANNED) {
+        if (text.includes(w)) fail(`已废弃的术语「${w}」出现在 ${path.relative(ROOT, p)}`);
+      }
+    }
+  }
+}
+
 // ---- 报告 ----
 if (problems.length) {
   console.error(`✗ ${problems.length} 个问题\n`);
