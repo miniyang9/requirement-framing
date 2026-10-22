@@ -1,6 +1,6 @@
 # dispatch（M 档素材）· 暂存
 
-**C 已经存在**：`skills/incremental-delivery/`（v0.1.0），但只实现了 S 档。
+**C 已经存在**：`skills/incremental-delivery/`（版本见 `skills/incremental-delivery/SKILL.md` 的 `metadata.version`），但只实现了 S 档。
 
 这里放 M 档还没做的部分：任务卡、星形 DAG、两阶段 review 的落地细节、合并节奏。
 
@@ -16,11 +16,11 @@
 
 | | S 档（已实现） | M 档（待补） |
 |---|---|---|
-| 继承 | 一次一片 / 契约不许改 / 四行台账 | 全部继承 |
+| 继承 | 一次一片 / 契约不许改 / 五行台账（做了 / 没做 / 下次 / 证据 / 返工） | 全部继承 |
 | 额外 | — | 任务卡、契约符合性检查、一次只合一个、两阶段 review |
 
 单写者用 M 档的设施是纯开销；多写者缺这些设施会互相踩。
 
 ## 边界
 
-"怎么切一片"是设计（B）；"切完怎么派、怎么合"是执行（C）。
+**切片的判据在 `solution-design`**（L2/L3 的契约与边界决定什么能被独立验收）；**怎么选片、怎么派、怎么合在 `incremental-delivery`**。

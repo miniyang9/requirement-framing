@@ -1,4 +1,2 @@
-node_modules/
-*.log
-.DS_Store
-Thumbs.db
+# 无 Node 项目；保留此行以防将来加脚本依赖
+# node_modules/

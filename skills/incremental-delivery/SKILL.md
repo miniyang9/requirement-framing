@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.3.1"
+  version: "0.3.2"
   status: draft
 ---
 
@@ -14,7 +14,7 @@ metadata:
 
 **它不是派发 skill。** 派发只是它在多写者下的一半；本版只实现单人档。
 
-## 门禁：三件齐 + 已冻 + 复核档位
+## 门禁：三件齐 + 已冻 + 复核执行档
 
 1. `docs/arch/<slug>/` 下 01 / 02 / 03 齐，且 01 首行写着 `frame: docs/frame/<slug>.md`
 2. 02 开头有冻结行：`冻结：<日期>    冻结人：<角色>`
@@ -25,10 +25,10 @@ metadata:
 |---|---|---|
 | 一个写者 | S | 继续 |
 | 多个写者 | M | 本版不支持 → **停**，说明 `incremental-delivery` 的 M 档未实现 |
-| 多个写者 | S | **停**，回 `requirement-framing` 改 frame，再重走 B |
+| 多个写者 | S | **停**，回 `requirement-framing` 改 frame，再重走 `solution-design` |
 | 一个写者 | M | **停**，同上——不要自己降档 |
 
-**缺任何一条就退回 `solution-design`，不要就地开写。** 设计不全时开工，等于把缺口留给未来的自己。
+**缺设计产物**（01/02/03、冻结行、签字）→ 退回 `solution-design`；**执行档不一致** → 退回 `requirement-framing` 改 frame（`solution-design` 无权改 frame）。两条路不要合并。 设计不全时开工，等于把缺口留给未来的自己。
 
 ## 核心循环（五步）
 
@@ -77,7 +77,7 @@ metadata:
 返工：无 / <七类之一 + 一句话>
 ```
 
-七类：理解 / 假设 / 验收不可测 / 切分丢约束 / 上下文丢失 / 实现跑偏 / **越权（签字前开工）**。
+七类：理解 / 假设 / 验收不可测 / 切分丢约束 / 上下文丢失 / 实现跑偏 / **越线（签字前开工，指没签就开工）**。
 
 **返工理由是硬字段。** 没有它，三个月后你不知道偏差通常发生在哪一跳。
 
@@ -89,7 +89,7 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**新会�
 
 ### 5 收敛判定
 
-对照 01 的五个问题逐条打勾：
+四项收敛检查（它们和 01 的五个架构问题不是一回事）：
 
 - **frame 里每条验收标准都有对应证据**（命令 / fixture / 日志字段）？——这是需求级，缺了后面几条都白打
 - 01 的五问各有对应代码 + 证据？
@@ -109,7 +109,7 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**新会�
 
 **没有这一节，就没有"完成"这个状态**——所有参与方都不知道该停在哪。
 
-> **S 档与 M 档在每一环的差别** → 读 `references/workmode.md`。复核档位之前必读。
+> **S 档与 M 档在每一环的差别** → 读 `references/workmode.md`。复核执行档之前必读。
 
 ## 铁律
 

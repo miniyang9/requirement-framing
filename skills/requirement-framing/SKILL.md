@@ -1,9 +1,9 @@
 ---
 name: requirement-framing
-description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
+description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.13.0"
+  version: "0.13.1"
   status: draft
 ---
 # Requirement Framing
@@ -46,13 +46,13 @@ frame 文档顶部必须有 `状态：`。
 | **待签** | 同上，再加：把用户的回答回写进 frame | 同上 |
 | **已签** | 开工（范围限于 frame 写明的） | 超出 frame 写明的范围 |
 
-**写 frame 不是越权，是这一步的产出。** 除了它，`待答` / `待签` 期间不碰任何会运行的东西。
+**写 frame 不是越线，是这一步的产出。** 除了它，`待答` / `待签` 期间不碰任何会运行的东西。
 
 **七条判据，缺一不能签：**
 
 1. **文档存在 ≠ 已签**——上一轮留下的默认"待签"
 2. **用户提问 ≠ 用户批准**——他是在问你，不是给你开工许可
-3. **执行档没写进文档 = 不能签**
+3. **两个轴都必须落定**：`执行档` 带「（待确认）」、或 `范围方案` 带「（待选）」/三项全列 → 不能签
 4. **已签只授权 frame 里写明的范围**——加需求、扩范围都是新的未知，先回退再谈
 5. **签字由人决定，落地可以由你执行**——用户明确说"签"之后，你改状态、填签字块，并如实写明**签字人 + 时间**。禁止的是：**没有人明确表态**你自己写上去；或把"另一个 agent 的确认"当作用户确认
 6. **新未知先分类**：用户决策 → 重开问题、状态回退"待签"；待查事实（探针能查）→ 写成 §0 承重事实，**不卡签字**
@@ -68,7 +68,7 @@ frame 文档顶部必须有 `状态：`。
 承诺：在收到这些回答前，我只写 `docs/frame/<slug>.md`，不创建任何可执行产物。
 ```
 
-**绑定的是动作，不是"第几条消息"。** 只读探查（读文件、列目录、grep）不算对外动作，可以先读再报——那时"待定"可能已经变成具体档位，更好。
+**绑定的是动作，不是"第几条消息"。** 只读探查（读文件、列目录、grep）不算对外动作，可以先读再报——那时「待定」可能已经变成具体的体量档，更好。
 
 **但没有这三行就提问，等于没报。** 尤其是用工具直接问用户（`ask_user_question` 这类）：**那三行必须写在发起它的同一轮文本里**。只弹出一张问题卡片、没有文本，用户看不到你在等什么、也不会有"承诺"这件事。
 
@@ -84,7 +84,9 @@ frame 文档顶部必须有 `状态：`。
 
 理由：重复运行意味着任何一处口径含糊，都会**每天稳定产出错的答案**，而不是错一次。别看实现形态（代码 / 调度器 / 表格 / 人工流程），只看它会不会反复执行。
 
-**不确定就问一句**："这个最后要交的是能跑的代码，还是一份文档/方案？"
+**不确定就问一句**："这件事是一次性的，还是以后会反复发生？如果会反复发生，你希望它每次自动产出同一个结论吗？"
+
+注意别问"要代码还是文档"——那是在按实现形态问，和上一段正好相反。
 
 **退化 ≠ 敷衍**：不建档、不判体量档、不设门禁，但仍正常澄清与给建议。
 
@@ -119,18 +121,31 @@ frame 文档顶部必须有 `状态：`。
 
 T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T1 不逐项走 17 项横切面——这是刻意减配，不是遗漏。
 
-**T1 减配的是展开量，不是授权。** 它照样产出 `docs/frame/<slug>.md`，照样要有 `状态：已签`，只是内容从六件套缩到五问、不写 §0。
+**T1 减配的是展开量，不是授权。** 它照样产出 `docs/frame/<slug>.md`，照样要有 `状态：已签`，只是内容从展开清单缩到五问、不写 §0。
+
+T1 的 frame 长这样（四行头 + 五问，**没有 §0**）：
+
+```
+状态：待答
+体量档：T1
+范围方案：最小 / 正规 / 平台化（待选）
+执行档：S 或 M（待确认）
+
+## 1. 体量   ## 2. 验收   ## 3. 不做   ## 4. 最大歧义   ## 5. 失败怎么办
+```
+
+判据 6 说的「待查事实」在 T1 下写进 §4 最大歧义，因为 T1 没有 §0。
 
 **不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以：
 
-- **T1 / T2** → 档位写进 frame 头部，随签字一并确认
+- **T1 / T2** → 体量档写进 frame 头部，随签字一并确认
 - **T0** 不建档（它本来就不启动流程），但**动手前必须输出这一行**：
 
 ```
 T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契约
 ```
 
-三个条件逐条为真才算 T0；少一条就升到 T1。**跳过这一行直接动手 = 越权。**
+三个条件逐条为真才算 T0；少一条就升到 T1。**跳过这一行直接动手 = 越线。**
 
 ### 三个轴，别混
 
@@ -159,12 +174,14 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 
 紧跟 `## 0. 承重事实` 一节。**本轮禁止任务列表、文件路径、实现步骤、代码。**
 
+**唯一的例外**：§0 里的 `[代码]` 来源需要写到 `文件:行`——那是溯源，不是实现步骤。
+
 **这四行是逐字可检查的字段**：`范围方案` 必须单独占一行，否则下游没法验证"三轴齐"；`执行档` 带"（待确认）"时不算定。
 
 1. **体量判定** — 分档 + 依据 + 判错一档的后果
 2. **隐含工作包** — 必须做 / 可能要做 / 建议不做；每条标 `[推断]` 或 `[你说过]`。写**能力与责任**（"帧采集与坐标归一化"），不写**步骤**（"写一个 grab() 函数"）——后者是任务列表，本轮禁止
 3. **两遍扫描** — 先层（17 项）再角色（5 个），读 `references/cross-sections.md`；每项给 已有 / 待定（取决于什么）/ 不适用（为什么）/ **不做（理由 + 谁砍的）**
-4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价 / **连带约束（推论）**，按晚定代价降序。晚定代价要**标类型**：`返工` / `不可逆` / `机会成本`——三种不能混排。**决策点 = 问题池；提问 = 从池里按"影响 × 不确定度"取前 5 个**
+4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价 / **连带约束（推论）**，晚定代价要**标类型**：`返工` / `不可逆` / `机会成本`。排序规则是**先按类型分组（不可逆 → 返工 → 机会成本），组内再按代价降序**——三类之间没有共同刻度，硬混排等于随口排。**决策点 = 问题池；提问 = 从池里按"影响 × 不确定度"取前 5 个**
 5. **三种范围方案** — 最小 / 正规 / 平台化，各自**放弃什么、锁死什么**
 6. **失败预演** — 三个死法 + 最早信号 + 对策
 7. **验收标准** — 每条一句「什么算通过」，**必须带阈值**（数字或布尔）。只写能从外部观察到的结果：写「三份表拼完，行数与三份之和相等」，不写「实现了合并」——后者是过程，不是验收
@@ -189,9 +206,11 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 签字人：<人类的名字或身份>    签字日期：<YYYY-MM-DD>    版本：<n>
 ```
 
+**`版本：<n>` 怎么编**：首次签字写 `1`；之后每次「改回待签 → 修改 → 重签」就 +1。它记的是这份 frame 第几次被签，与 skill 的 `metadata.version` 无关。
+
 **签字块是硬字段。** 没有它，下游无法验证"这份 frame 是谁、什么时候、哪一版签的"。
 
-**签完之后任何改动都会让签字失效**——包括"回第 2 步补一句"。改已签 frame 的第一步是**把状态改回 `待签`**，改完重签。B 读到 `待签` 就该停下，而不是"反正内容都在"。
+**签完之后任何改动都会让签字失效**——包括"回第 2 步补一句"。改已签 frame 的第一步是**把状态改回 `待签`**，改完重签。`solution-design` 读到 `待签` 就该停下，而不是"反正内容都在"。
 
 **不是"已签"不进第 4 步。**
 
@@ -253,7 +272,7 @@ docs/frame/<slug>.md    # 唯一产物：四行状态 + §0 承重事实 + 展�
 
 只有这一个。`docs/arch/` 及其后的产物归下游。
 
-**示例绝不放在 `docs/frame/` 下**——同路径会让下一轮把示例当成已签规格。
+**示例绝不放在 `docs/frame/` 下**——同路径会让下一轮把示例当成已签规格。示例属于 `examples/`；目前仓库里没有示例。
 
 ---
 

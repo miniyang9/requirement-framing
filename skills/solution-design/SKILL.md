@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.5.0"
+  version: "0.5.1"
   status: draft
 ---
 
@@ -26,8 +26,8 @@ metadata:
 | # | 检查 | 不过怎么办 |
 |---|---|---|
 | 1 | `状态：已签` | 退回 `requirement-framing` 签字 |
-| 2 | `## 0. 承重事实` 至少一条，且每条带锚点。**体量档是 T1 时可接受等效物**：§4 最大歧义 + §3 不做清单齐备（T1 按 A 的减配条款不写 §0） | 退回 `requirement-framing` 补 §0；或把 T1 改成 T2 |
-| 3 | 头部四行齐：`状态` / `体量档` / `范围方案` / `执行档`，且**不带"（待确认）"** | 退回 `requirement-framing` 补 |
+| 2 | `## 0. 承重事实` 至少一条，且每条带锚点。**体量档是 T1 时可接受等效物**：五问里的「最大歧义」与「不做」两节齐备（T1 按 `requirement-framing` 的减配条款不写 §0） | 退回 `requirement-framing` 补 §0；或把 T1 改成 T2 |
+| 3 | 头部四行齐，且**两轴都已落定**：`范围方案` ∈ {最小, 正规, 平台化}（不含「待选」、不是三项全列）；`执行档` 不含「（待确认）」 | 退回 `requirement-framing` 补 |
 | 4 | "不做"的条目带了理由 | 退回 `requirement-framing` 补理由 |
 | 5 | **没有未关闭的 `UPSTREAM-xx`**（关闭办法见「上游异议」） | 先关闭，不许带病设计 |
 | 6 | 签字块三字段齐：`签字人` / `签字日期`（可解析）/ `版本` | 退回 `requirement-framing` 补签字块 |
@@ -109,7 +109,7 @@ metadata:
 
 落地时只改一格：`待落地` → `已落地 → core/models.py:31`。
 
-**谁写形状**：实现者在第一次落地时把类型写进代码——**不是 B，也不是契约所有者**。但它必须满足这一行的约束（唯一写者、封闭集合、不变量）；**新增实现内部字段不算改契约**。
+**谁写形状**：实现者在第一次落地时把类型写进代码——不是 `solution-design`，也不是契约的写者。但它必须满足这一行的约束（唯一写者、封闭集合、不变量）；**新增实现内部字段不算改契约**。
 
 **没有"某天把 02 改写成指针"这个动作**——那种任务一定会忘，而且没人负责检测"落地"这个时刻。谁改：执行阶段每片收尾时（`incremental-delivery` 的职责，它才知道代码落在哪）。
 
@@ -170,10 +170,10 @@ S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
 | 级 | 谁做 | 交付物 |
 |---|---|---|
 | L2–L5 | **本 skill** | 架构一页 + 契约 + 决策记录 |
-| 执行（选片 / 写 / 验 / 收尾） | `incremental-delivery` | 每片四行台账 |
+| 执行（选片 / 写 / 验 / 收尾） | `incremental-delivery` | 每片五行台账（做了 / 没做 / 下次 / 证据 / 返工） |
 | 多写者派发 | `incremental-delivery` 的 M 档（**未实现**） | 任务卡 |
 
-**本 skill 不产出任务卡。** 用户要"把它拆成任务"时，说明该进 C 了。
+**本 skill 不产出任务卡。** 用户要"把它拆成任务"时，说明该进 `incremental-delivery` 了。
 
 ## 设计侧红旗
 

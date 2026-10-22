@@ -1,8 +1,8 @@
-# requirement-framing
+# 需求框架三件套 · requirement-framing / solution-design / incremental-delivery
 
 把几句话的需求展开成可审查的规格，**在任何人开始拆任务之前**设一道门。
 
-**范围：只做 L1（立项）**——从一句话到一份签字的 frame。架构设计、契约冻结、任务派发不在这个 skill 里，见「交棒」。
+**三个 skill 各管一段**：`requirement-framing` 做 L1 立项（从一句话到一份签字的 frame）；`solution-design` 做 L2–L5（架构 / 契约 / 决策 / 骨架判据）；`incremental-delivery` 做 L6–L7 执行（选片 / 写 / 验 / 收尾 / 收敛）。
 
 一个纯内容的 skill：只有指令和参考文档，没有可执行代码，没有安装依赖。
 
@@ -22,20 +22,20 @@
 
 ## 它解决什么
 
-用户用几句话描述一个工程，agent 常常直接分解成几个小任务——于是框架、方案、非功能、运维这些层面从未被讨论。这个 skill 强制先**展开**（两遍扫描 + 隐含工作包 + 决策点 + 三种范围方案 + 失败预演），把没说的倒出来，再让用户签字。
+用户用几句话描述一个工程，agent 常常直接分解成几个小任务——于是框架、方案、非功能、运维这些层面从未被讨论。这个 skill 强制先**展开**（体量判定 / 隐含工作包 / 两遍扫描 / 决策点 / 三种范围方案 / 失败预演 / 验收标准 共七项），把没说的展开出来，再让用户签字。
 
 三条门禁：
 
 1. 领域闸门未通过 → 全程不介入
 2. 没有签字的 frame → 不许创建任何**可执行产物或工程结构**（代码 / 脚手架 / 部署脚本 / 目录 / 依赖）。**frame 本身不在此列**——它是提问与签字的载体，必须先写
-3. 展开阶段出现任务列表 → **越权**；回第 2 步把步骤改写成能力与责任，不要带下去
+3. 展开阶段出现任务列表 → **越线**；回第 2 步把步骤改写成能力与责任，不要带下去
 
 ## 流程一览
 
 ```
 第 0 步  领域闸门      会重复运行吗？不是 → 退化
 第 1 步  定体量档      T0 直接做 / T1 一页五问 / T2 走完 L1
-第 2 步  L1 展开       展开清单 + 两遍扫描 + ≤5 个问题（禁止任务列表）
+第 2 步  L1 展开       展开清单（七项）+ ≤5 个问题（禁止任务列表）
 第 3 步  人审签字      划掉 / 纠正 [推断] / 答问 / 选范围方案 / 确认执行档
 第 4 步  检查交付物    frame 的 §0 承重事实是否写全
 第 5 步  交棒          指向下游：已签的 frame 就是输入
@@ -50,15 +50,20 @@ requirement-framing/
 │   └── references/           # 细则，按需读取
 │       ├── questioning.md    # 提问纪律：三分类 / 一题一问 / 质量门 / 周期五问
 │       ├── cross-sections.md # 17 项横切面 + 五角色第二遍
-│       └── red-flags.md      # L1 侧 11 条红旗
+│       ├── provenance.md     # §0 写法：推论 / 锚点 / 四类来源
+│       └── red-flags.md      # L1 侧 10 条红旗
 ├── skills/solution-design/   # B：L2–L5 架构 / 契约 / 决策 / 骨架判据
 │   ├── SKILL.md              # 门禁（读已签 frame）+ 五个架构问题 + 契约判据 + 交棒
 │   └── references/
 │       ├── contracts.md      # 六个契约 / 桩 / 单人等价物
-│       └── modes.md          # S/M 判定 + L2–L5 逐级对照
-├── skills/incremental-delivery/  # C：执行（选片/写/验/收尾），只实现 S 档
-│   └── SKILL.md
+│       ├── modes.md          # S/M 判定 + L2–L5 逐级对照
+│       ├── diagrams.md       # 视图选择 + 可重建路径
+│       └── change-propagation.md  # 变更传播 / 解冻 / 交付前三查
+├── skills/incremental-delivery/  # C：执行（选片/写/验/收尾/收敛），只实现 S 档
+│   ├── SKILL.md
+│   └── references/workmode.md    # S/M 逐环节对照
 ├── staging/dispatch/         # C 的 M 档素材，不安装
+├── scripts/check.mjs         # 仓库自检：BOM / frontmatter / 指针 / 孤儿 / 行尾 / 计数
 ├── CHANGELOG.md
 ├── LICENSE
 └── README.md
@@ -72,13 +77,13 @@ requirement-framing/
 | L2 架构 · L3 契约 · L4 决策 · L5 骨架 | **`solution-design`** |
 | 执行：选片 / 写 / 验 / 收尾 | **`incremental-delivery`**（只实现 S 档） |
 | 多写者派发 | 未实现，素材在 `staging/dispatch/` |
-| L6 切片 · L7 派发 · 编码 | 执行流（subagent / workflow / 常规实现） |
+| L6 切片 · L7 执行 | **`incremental-delivery`**（切片判据来自 L2/L3，见 `solution-design`） |
 
 **为什么拆**：需求展开和架构设计的**触发时机不同**——"我还没想清楚要做什么" vs "我知道要做什么，不知道该怎么拆"。一个 skill 只有一个 description，混在一起会让两类场景都半准不准。
 
-**为什么不拆成三个**：新建 skill 要过四条判据（触发时机不同 · 产物能独立验收 · 签字主体不同 · 内容量撑得起）。派发那一段前三条过、第四条不过（约 1 KB 判据），所以不建第三个，将来挂成 `solution-design` 的一个 reference。
+**为什么派发不单独成 skill**：新建 skill 要过四条判据（触发时机不同 · 产物能独立验收 · 签字主体不同 · 内容量撑得起）。派发那一段前三条过、第四条不过，所以它是 `incremental-delivery` 的 M 档，不另立门户。
 
-**什么时候建 B**：先让交接块跑通 2–3 次真实需求，看它实际缺什么，再定 B 的形状。先建 B 就是让 B 去适配一个没验证过的接口。
+**什么时候补 M 档**：见 `staging/dispatch/README.md` 的触发条件——核心信号是出现 ≥2 个能同时开工、且各自能独立验收的并行面。
 
 ## 为什么主干短、细则外置
 
@@ -98,7 +103,7 @@ requirement-framing/
 
 skill 的本质是"一个被发现的目录"，所以有三种用法，都没有安装步骤：
 
-1. **拷进宿主的 skills 目录**：把 `skills/requirement-framing/` 整个复制过去，目录名与 `SKILL.md` 里的 `name` 一致即可
+1. **拷进宿主的 skills 目录**：把 `skills/` 下三个目录整体复制过去（它们互相引用，单拷一个会让交棒指针落空），目录名与各自 `SKILL.md` 里的 `name` 一致即可
 2. **当指令粘**：把 `SKILL.md` 的内容直接粘给任何 agent
 3. **当仓库引用**：让 agent 读 `skills/requirement-framing/SKILL.md` 再按流程走
 
@@ -110,7 +115,7 @@ plugin 的价值是**投递与生命周期**（npm 版本、一键启用/停用�
 
 ## 版本
 
-0.10.0 · draft · 2026-10-20
+`requirement-framing` 0.13.0 · `solution-design` 0.5.0 · `incremental-delivery` 0.3.1 · draft · 2026-10-21
 
 ## 许可
 
