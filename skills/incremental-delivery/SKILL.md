@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.3.0"
+  version: "0.3.1"
   status: draft
 ---
 
@@ -16,9 +16,10 @@ metadata:
 
 ## 门禁：三件齐 + 已冻 + 复核档位
 
-1. `docs/arch/` 下 01 / 02 / 03 齐
+1. `docs/arch/<slug>/` 下 01 / 02 / 03 齐，且 01 首行写着 `frame: docs/frame/<slug>.md`
 2. 02 开头有冻结行：`冻结：<日期>    冻结人：<角色>`
-3. **复核执行档**：读 **frame 头部的 `执行档`**（执行档只有一个来源，不读 01），再看现在实际有几个写者。
+3. **frame 是已签的**：`状态：已签`，且签字块三字段齐（签字人 / 签字日期 / 版本）。**没有签字的设计不许开工。**
+4. **复核执行档**：读 **frame 头部的 `执行档`**（执行档只有一个来源，不读 01），再看现在实际有几个写者。
 
 | 实际情况 | frame 写的是 | 动作 |
 |---|---|---|
@@ -90,7 +91,8 @@ S 档的 review 就在这一步：把产物 + 验收结果交给一个**新会�
 
 对照 01 的五个问题逐条打勾：
 
-- 每问都有对应代码 + 验收证据？
+- **frame 里每条验收标准都有对应证据**（命令 / fixture / 日志字段）？——这是需求级，缺了后面几条都白打
+- 01 的五问各有对应代码 + 证据？
 - 02 的每个契约都有唯一写者，且代码里属实？
 - **02 里的 `待落地` 是否都已变成 `已落地 → 文件:行`？**（指针过期 = 文档在说谎）
 - 01 的"不做"清单，一条都没被违反？

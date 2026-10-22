@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 用于会重复运行的产物，以及对现有服务 / 代码库的改造：脚本、服务、工具、agent、定时任务、监控、机器人；用户说「加个功能」「改造一下」「做个自动化的」「帮我理一下需求」都算。立项、提问、签字归本 skill。Scope: L1 only — ask, expand, sign. A signed frame is the artifact. Architecture, contracts and slicing belong downstream. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies."
 license: MIT
 metadata:
-  version: "0.12.3"
+  version: "0.13.0"
   status: draft
 ---
 # Requirement Framing
@@ -146,7 +146,7 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 
 全文只用这三个固定叫法。看到"规模""档位"这类含糊词，一律替换成上面某一个。
 
-## 第 2 步：L1 展开（六件套）
+## 第 2 步：L1 展开
 
 产出 `docs/frame/<slug>.md`，顶部先写**四行**：
 
@@ -167,6 +167,7 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 4. **决策点** — 选项 / 推荐 / 可逆性 / 晚定代价 / **连带约束（推论）**，按晚定代价降序。晚定代价要**标类型**：`返工` / `不可逆` / `机会成本`——三种不能混排。**决策点 = 问题池；提问 = 从池里按"影响 × 不确定度"取前 5 个**
 5. **三种范围方案** — 最小 / 正规 / 平台化，各自**放弃什么、锁死什么**
 6. **失败预演** — 三个死法 + 最早信号 + 对策
+7. **验收标准** — 每条一句「什么算通过」，**必须带阈值**（数字或布尔）。只写能从外部观察到的结果：写「三份表拼完，行数与三份之和相等」，不写「实现了合并」——后者是过程，不是验收
 
 **提问前先读 `references/questioning.md`**：三分类决定问谁、一次只问一题、每题带立场明确的建议答案。最多 5 题。
 
@@ -206,7 +207,9 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 - [ ] 未决项要么清空，要么标了"按推荐取默认，可推翻"
 - [ ] **跨节一致**：§2「可能要做」里的项，§5 某档是否已判"放弃"？§4 改过结论的决策点，§0 的锚点是否还成立？用户的回答是否已回写到 §1–§6？
 
-检查不过就回第 2 步补，不要带到下游。
+检查不过：**先把状态改回 `待签`** → 回第 2 步补 → 重签 → 重跑第 4 步。
+
+不要带着「已签」去改内容——那会留下「内容已改、签字还在」的 frame，正是签字机制要防的东西。
 
 ## 第 5 步：交棒
 
@@ -245,7 +248,7 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 ## 产出物
 
 ```
-docs/frame/<slug>.md    # 唯一产物：四行状态 + §0 承重事实 + 六件套
+docs/frame/<slug>.md    # 唯一产物：四行状态 + §0 承重事实 + 展开清单
 ```
 
 只有这一个。`docs/arch/` 及其后的产物归下游。
@@ -254,4 +257,4 @@ docs/frame/<slug>.md    # 唯一产物：四行状态 + §0 承重事实 + 六�
 
 ---
 
-细则索引：`questioning.md`（提问纪律）· `cross-sections.md`（两遍扫描）· `red-flags.md`（完整 11 条）
+细则索引：`references/questioning.md`（提问纪律）· `references/cross-sections.md`（两遍扫描）· `references/red-flags.md`（完整 10 条）

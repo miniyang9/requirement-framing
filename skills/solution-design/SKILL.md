@@ -1,9 +1,9 @@
 ---
 name: solution-design
-description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (Status: signed) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
+description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.4.3"
+  version: "0.5.0"
   status: draft
 ---
 
@@ -21,7 +21,7 @@ metadata:
 
 **只有"已签"能进。** 待答 / 待签 → 退回 `requirement-framing`，一句话说明，不要就地脑补需求。
 
-### frame 体检（五条，缺一退回）
+### frame 体检（七条，缺一退回）
 
 | # | 检查 | 不过怎么办 |
 |---|---|---|
@@ -30,6 +30,8 @@ metadata:
 | 3 | 头部四行齐：`状态` / `体量档` / `范围方案` / `执行档`，且**不带"（待确认）"** | 退回 `requirement-framing` 补 |
 | 4 | "不做"的条目带了理由 | 退回 `requirement-framing` 补理由 |
 | 5 | **没有未关闭的 `UPSTREAM-xx`**（关闭办法见「上游异议」） | 先关闭，不许带病设计 |
+| 6 | 签字块三字段齐：`签字人` / `签字日期`（可解析）/ `版本` | 退回 `requirement-framing` 补签字块 |
+| 7 | 每条承重事实带四类来源之一（`[你说过]`/`[推断]`/`[代码]`/`[外部]`）；T1 走等效物时不强求 | 退回补来源 |
 
 **手写的 frame 也要过这五条。** "看起来完整"不是通过条件——`requirement-framing` 的第 4 步自检是它的承诺，不是你的验收；两边各做一次。
 
@@ -59,7 +61,7 @@ metadata:
 
 体量档、范围方案、执行档在 L1 已经定了。这里只**消费**：
 
-- **执行档**决定后面几级取哪一列（S：1–3 视图 / 代码类型；M：分层文档 / 契约版本）
+- **执行档**决定后面几级取哪一列（S：1–3 视图 / 代码类型；M：分层文档 / 契约版本）——**判定规则与逐级对照见 `references/modes.md`**
 - **体量档**决定要不要全走（T1 通常只走一部分）
 - 想改任何一个轴 → 回 `requirement-framing` 改 frame，不要在这里偷偷调整
 
@@ -101,9 +103,9 @@ metadata:
 
 没有这一行，执行阶段无法判断"能不能开工"。然后每个契约一行，形状那一栏本来就是一个指针：
 
-| 契约 | 形状 | 唯一写者 | 冻结理由 |
-|---|---|---|---|
-| `Repo` | 待落地 → `core/models.py` | Fetcher（两实现互斥） | 流水线入口形状 |
+| 契约 | 形状 | 唯一写者 | 约定（不变量 · 封闭集合 · 错误码） | 版本 | 冻结理由 |
+|---|---|---|---|---|---|
+| `Repo` | 待落地 → `core/models.py` | Fetcher（两实现互斥） | views 非空；url 规范化 | v1 | 流水线入口形状 |
 
 落地时只改一格：`待落地` → `已落地 → core/models.py:31`。
 
@@ -139,17 +141,22 @@ metadata:
 
 推论：**L5 的位置不固定。** 后果越不可逆，它越靠前——对交易系统，回测骨架几乎排在建契约之前。
 
-**01 必须给 L5 和验收各留一节**，否则执行侧无处可读，"验"必然退化成自证：
+**01 必须给 L5、验收、落盘形状各留一节**，否则执行侧无处可读，"验"必然退化成自证：
 
 ```
 ## 骨架（L5）
 S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
 
 ## 验收
-五问各对应什么证据（命令 / fixture / 日志字段）
+两段都要写：
+- **frame 的验收标准 → 证据**（需求级：每条判据对应什么命令 / fixture / 日志字段）
+- **L2 五问 → 证据**（架构级：每问对应什么）
+
+## 落盘形状
+目录树 + 每个产物落在哪（执行侧不另定目录结构）
 ```
 
-**没有这两节，01 不算完成。**
+**没有这三节，01 不算完成。**
 
 ## 四条硬约束
 
@@ -181,9 +188,9 @@ S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
 ## 产出物
 
 ```
-docs/arch/01-architecture.md    # 五个问题的答案 + 嵌图
-docs/arch/02-contracts.md       # 契约索引：形状（落地后指向代码）+ 约定（永久）
-docs/arch/03-decisions.md       # 一行一条，带编号与否决项
+docs/arch/<slug>/01-architecture.md  # 首行 `frame: docs/frame/<slug>.md`；五问 + 嵌图 + L5 + 验收 + 落盘形状
+docs/arch/<slug>/02-contracts.md     # 契约索引：形状（落地后指向代码）+ 约定（永久）
+docs/arch/<slug>/03-decisions.md     # 一行一条，带编号与否决项
 docs/arch/diagrams/<slug>/<view>.json  # 每个视图一份源（可 diff）
 docs/arch/diagrams/<slug>/render.*     # 渲染器（不许放 .tmp）
 docs/arch/diagrams/<slug>/<view>.png   # 生成物，嵌进 01
