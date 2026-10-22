@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.6.2"
+  version: "0.7.1"
   status: draft
 ---
 
@@ -167,6 +167,66 @@ S1 … S4：每条一句"验什么" + 一个通过阈值（数字或布尔）
 ```
 
 **没有这三节，01 不算完成。**
+
+## 造还是用（技术选型）
+
+**LLM 写代码太容易，所以默认偏向必然是「我自己写」——它没有动机去找包。** 这一节是用来平衡那个偏向的。
+
+### 造之前先问
+
+自造一个非平凡部件之前，答三句，写进 03 的一条 ADR：
+
+1. **它是商品能力还是差异点？**
+   - 商品（WebSocket / 认证 / 日期 / HTTP / 序列化 / 日志 / 调度）→ **默认用现成的**
+   - 差异点（业务规则、核心算法）→ 默认自造
+2. **现成的代价**：维护状态、license、供应链、体积
+3. **自造的代价**：不只是写，还有边界情况（协议分片 / 时区 / 编码 / 并发）和长期维护
+
+**判据：这一块出问题时，责任落在谁身上？** 用现成的，坑在上游；自造，坑在自己。
+
+**不许拿「我写得出来」当理由。**
+
+**触发条件**（达到就必须先查一眼，不用每件小事都论证）：
+
+- 预计超过 ~200 行，或
+- 涉及协议 / 加密 / 时间与时区 / 字符编码 / 并发这五类「细节决定成败」的领域
+
+查的方式：`web_search` + 看包的主流程和最近提交。
+
+### 引入依赖：先分两类
+
+**先分清是「不可用」还是「有风险」**——两者处理完全不同。
+
+#### A. 不可用（法律或供应链上的硬伤）
+
+| 查什么 | 什么算不可用 | 怎么办 |
+|---|---|---|
+| **License** | 没有 LICENSE 文件（保留所有权利，**无声明 ≠ 免费**）；GPL / AGPL 且项目闭源 | **换一个** |
+| **供应链** | 包名近似热门包（typosquat）；repository 链接和官方对不上；postinstall 有网络动作或原生编译 | **换一个** |
+
+**默认按闭源处理**——不需要为了判断它去问人。用户说过这个项目是开源的，GPL / AGPL 才可用。
+
+**这一类先换，不要停下来问。** 只有「找不到任何替代」时才停——那时选择真的只有人类能做。
+
+#### B. 有风险但可用
+
+| 查什么 | 信号 | 处理 |
+|---|---|---|
+| **已知漏洞** | `npm audit` / `pip-audit` / GitHub Advisory 报 high 或 critical | ① 有修复版本 → 升上去 ② 有等价替代 → 换掉 ③ 都没有 → **记账继续** |
+| **还活着吗** | 12 个月无提交 / 最近 release 超 2 年且主版本没动 / 有 abandoned 声明 | 同上三步 |
+
+**这一类不停。** AI 找漏洞让「有 high」变成高频事件，硬拒会把大部分包卡死。**记账，在发布时一起还。**
+
+#### C. 两项必做（两类都要）
+
+| # | 做什么 | 判据 |
+|---|---|---|
+| 1 | **隔离** | 只被 **1 个文件** import → 可以不包；被 **2 个及以上** import → **必须包一层 adapter**，之后只许 adapter 里出现这个包名 |
+| 2 | **记账** | 03 一条 ADR：为什么用、替我省了什么（多少行 / 多少天）、传递依赖数、换掉它要改几个文件；属于 B 类的，标 `已知风险：…` |
+
+**隔离是这一节里最重要的一条。** 一个包再流行，一旦渗进 20 个文件，它就成了你的架构——**替换成本才是真正的成本**。
+
+**人类判断不在这里发生。** 这里的判断全部推迟到交付前的发布确认——那时本来就要人拍板，不新增关卡。
 
 ## 四条硬约束
 

@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.8.0"
+  version: "0.8.2"
   status: draft
 ---
 
@@ -108,6 +108,7 @@ metadata:
 - **不许改契约**——02 里的唯一写者、封闭集合、不变量。**允许**：写实现、加实现内部字段、把 `待落地` 更新成 `已落地 → 文件:行`
 - 契约不足 → **停**，记一笔，回 `solution-design`；不许就地扩字段
 - 不许"顺手"加 01 里"不做"清单上的东西
+- **写一个非平凡部件之前，先看 `solution-design` 的「造还是用」**——默认自造是模型的偏向，不是判断
 
 ### 3 验
 
@@ -289,6 +290,7 @@ metadata:
 ## 交付 · <日期>
 范围：<frame 的范围方案>
 依据：第 N 片 `收敛：5/5`；黑盒 <N> 条全绿；评审结论：可发布（<日期>）
+已知风险：<从 03 的 ADR 汇总那些标了「已知风险」的依赖，没有就写 无>
 人类确认：<姓名 / 日期>
 未做：<明确列出的没做项，没有就写 无>
 ```
