@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.13.1"
+  version: "0.14.0"
   status: draft
 ---
 # Requirement Framing
@@ -40,11 +40,11 @@ metadata:
 
 frame 文档顶部必须有 `状态：`。
 
-| 状态 | 可写 | 禁止写 |
-|---|---|---|
-| **待答** | **只写自己这一份 frame**（`docs/frame/<slug>.md`）；只读探查 | 代码 / 脚手架 / 配置样例 / 部署脚本 / 项目目录 / 依赖 |
-| **待签** | 同上，再加：把用户的回答回写进 frame | 同上 |
-| **已签** | 开工（范围限于 frame 写明的） | 超出 frame 写明的范围 |
+| 状态 | 何时进入 | 可写 | 禁止写 |
+|---|---|---|---|
+| **待答** | frame 已建、问题还没答完 | **只写自己这一份 frame**（`docs/frame/<slug>.md`）；只读探查 | 代码 / 脚手架 / 配置样例 / 部署脚本 / 项目目录 / 依赖 |
+| **待签** | `## 待你回答` 里每条都有答案（或标了「按推荐默认，可推翻」），**且** `范围方案` / `执行档` 不带「（待选）」「（待确认）」 | 同上，再加：把用户的回答回写进 frame | 同上 |
+| **已签** | 人类明确说签，签字块三字段已写 | 开工（范围限于 frame 写明的） | 超出 frame 写明的范围 |
 
 **写 frame 不是越线，是这一步的产出。** 除了它，`待答` / `待签` 期间不碰任何会运行的东西。
 
@@ -132,9 +132,17 @@ T1 的 frame 长这样（四行头 + 五问，**没有 §0**）：
 执行档：S 或 M（待确认）
 
 ## 1. 体量   ## 2. 验收   ## 3. 不做   ## 4. 最大歧义   ## 5. 失败怎么办
+
+## 待你回答
+Q1 …（每题一句，附推荐答案）
+
+## 签字
+签字人：____    签字日期：____    版本：1
 ```
 
 判据 6 说的「待查事实」在 T1 下写进 §4 最大歧义，因为 T1 没有 §0。
+
+**注意**：上面是**最小集，不是全集**。`## 待你回答` 和签字块这两节，T1 和 T2 都必须有——少了它们，frame 就不再是「提问与签字的载体」，问题只活在聊天里，换个会话就丢了。
 
 **不许自我降档。** 把需求判成 T0/T1 是模型的动作，但它直接决定"要不要签字"，所以：
 
@@ -188,11 +196,15 @@ T0：<要改的那一个点> ｜ 不新增文件、不新增依赖、不动契�
 
 **提问前先读 `references/questioning.md`**：三分类决定问谁、一次只问一题、每题带立场明确的建议答案。最多 5 题。
 
+**T2 的 frame 同样以 `## 待你回答` 和签字块两节结尾**——展开清单是内容，这两节是接口，不能省。
+
 > **承重事实、锚点、来源标注怎么写** → 读 `references/provenance.md`。写 §0 之前必读。
 
 ## 第 3 步：人审与收缩
 
 用户做**五件事**：划掉不适用的、纠正 `[推断]`、答问、**选范围方案**、**确认执行档**。
+
+**签字确认的对象是四样**：`## 待你回答` 里那几条的答案、体量档、范围方案、执行档。范围之外的东西签不下来——那属于扩范围。
 
 **签字是一次提交，不是三轮提问。** 五件事可以一次给全——"一次只问一题"约束的是**提问**，不是**提交**。把三个决策塞进一道题里再自认违规，是没分清这两种交互。
 
