@@ -2,6 +2,14 @@
 
 本仓库现在承载三个 skill：`requirement-framing`（A，L1）、`solution-design`（B，L2–L5）、`incremental-delivery`（C，执行）。C 的 M 档（多写者派发）未实现，素材在 `staging/dispatch/`。
 
+## C 0.4.3 — 2026-10-22
+
+新增「开工前：环境假设要实测」。起因是真实落地里的一次误判：agent 探到「没有网络」，于是手写 191 行 RFC6455 WebSocket——而实测 `npm install ws` 只要 1 秒。
+
+三个失败信号叠在一起，一个都不成立：`curl` 在 Windows 走 Schannel 返回 `000`（不是断网）、`npm` 缓存写在 `%LOCALAPPDATA%` 被沙箱拦成 `EPERM`（不是没权限）、`node --test` 要 spawn 被拦（不是不能测）。
+
+规则：下「环境不支持」的结论前，换至少两种互不依赖的手段验一次。
+
 ## C 0.4.2 — 2026-10-22
 
 返工七类从"一串标签"改成一张表：每类补上**什么时候填**和**回哪**。

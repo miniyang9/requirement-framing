@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.4.2"
+  version: "0.4.3"
   status: draft
 ---
 
@@ -22,6 +22,19 @@ metadata:
 4. **要派发时**：本片依赖的那几条契约必须已冻结（有版本号、写者不许改）。没冻结就派发 = 两个人对同一份约定各写各的。
 
 **缺设计产物**（01/02/03、冻结行）→ 退回 `solution-design`；**frame 未签** → 退回 `requirement-framing`。两条路不要合并。设计不全时开工，等于把缺口留给未来的自己。
+
+## 开工前：环境假设要实测
+
+下「环境不支持 X」的结论之前，换**至少两种互不依赖**的手段验一次。一个探针失败，说明的是这个探针，不是环境。
+
+| 想验 | 可靠做法 | 容易误判的做法 |
+|---|---|---|
+| 有没有网 | `node -e "fetch('https://…').then(r=>console.log(r.status))"` | `curl`——Windows 上走 Schannel，可能与你无关地失败（返回 `000`） |
+| 能不能装包 | 先把缓存指进工作区：`npm_config_cache=<工作区>/.npm-cache` | 直接 `npm i`——缓存默认在 `%LOCALAPPDATA%`，在工作区外会被沙箱拦成 `EPERM` |
+| 能不能跑测试 | 直接跑测试文件 | `node --test`——它 spawn 子进程，被沙箱拦 |
+
+**三个失败信号连着来，很可能一个都不成立。** 把「环境不支持」当成既定事实，代价是去手写本该直接用的东西——真实案例里，为此手写了 191 行 WebSocket，而 `npm install ws` 只要 1 秒。
+
 
 ## 核心循环（五步）
 
