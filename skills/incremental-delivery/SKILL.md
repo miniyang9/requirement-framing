@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.6.0"
+  version: "0.6.1"
   status: draft
 ---
 
@@ -176,7 +176,15 @@ metadata:
 
 **本片让哪个契约落地了？** 有 → 去 `02-contracts.md` 把那一行的 `待落地` 改成 `已落地 → 文件:行`。这是唯一需要动设计文档的时刻，别攒着——攒着就一定会忘。
 
-串行时的 review 就在这一步：把产物 + 验收结果交给一个**新会话（无前序上下文）**，只问「满足规格吗？哪里不对？」
+片级 review 是**代码 review**，不是设计 review——设计已经在 frame 复审和 arch 复审里审过了。
+
+把产物 + 验收结果交给一个**新会话（无前序上下文）**，按三样查：
+
+1. **没多没少**——只做了这一片该做的，没顺手加别的
+2. **实现质量**——测试是不是在验规格（不是"看起来对"）、有没有断言放水、有没有"测了 happy path 就算"
+3. **没违反契约**——唯一写者、封闭集合、错误码、版本号都守住了
+
+**发现设计问题就停，回 `solution-design` 补契约——不许在代码里绕过。** 片级 review 不许改设计。
 
 **顺序是 review → 台账，不是反过来。** 反过来，台账记的是"我做了什么"，而不是"别人验过什么"。review 的结论和证据写进那一行 `证据：`。
 
