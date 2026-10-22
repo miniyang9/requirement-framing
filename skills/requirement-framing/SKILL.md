@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.14.0"
+  version: "0.14.1"
   status: draft
 ---
 # Requirement Framing
@@ -117,7 +117,22 @@ frame 文档顶部必须有 `状态：`。
 
 **「待定」不是新的一档。** 它只表示"我还判不了"，一旦缺口补上就必须落到 T0/T1/T2 之一——它不许一直挂在那里。
 
-**事实为零时，可以先问再展开。** 如果缺的是"东西在哪"这类地基事实，允许第一轮只问位置、先不写 frame——拿不到位置就展开，等于编造。拿到之后再走第 2 步。**顺序可以变，承诺不变**（仍然不创建任何可执行产物）。
+**地基事实缺失时，先问再展开。** 展开之前问自己一句：
+
+> 有没有哪一条事实，如果它变了，这整份 frame 的骨架就要重写？
+
+有，它就是**地基事实**。典型四种：
+
+| 类型 | 长什么样 |
+|---|---|
+| 口径 | "每天几个班""什么算活跃用户""重复到什么程度算重复" |
+| 对象 | "改的是哪个系统""代码在哪" |
+| 来源 | "数据从哪来""谁在维护" |
+| 结构 | "单账号还是多账号""一个入口还是几个" |
+
+**先问它，再展开。** 在地基未定时跑 17 项扫描、写十几条验收，产出的是一份"看起来很完整、但每条都建在同一个假设上"的文档——**展开得越全，返工越大**。
+
+事实为零（连对象都不知道）当然更该先问，那是这条的极端情况。**顺序可以变，承诺不变**（仍然不创建任何可执行产物）。
 
 T1 的五问：体量 / 验收 / 不做 / **最大歧义** / 失败怎么办。T1 不逐项走 17 项横切面——这是刻意减配，不是遗漏。
 
