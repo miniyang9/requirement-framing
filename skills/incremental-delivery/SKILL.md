@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.5.0"
+  version: "0.5.1"
   status: draft
 ---
 
@@ -209,6 +209,18 @@ metadata:
 没有引用 = 不算交付，只是聊天里的一句话。
 
 > **串行与派发在每一环的差别** → 读 `references/workmode.md`。选片之前必读。
+
+## 什么时候停
+
+收敛 5/5 之后，看三样：
+
+1. **还有剩余片，且没有阻塞 → 继续下一片，不要停下来问**
+2. **被外部依赖挡住且无片可做** → 停，说明在等什么
+3. **需要人类决策** → 停，问清楚；**拿到答案后回到刚才那一片做完，再往下走**
+
+只有「交付完成」、或者第 2、3 条，才是合法的停。
+
+**「一次一片」是节奏，不是收工信号。** 它说的是不许并行、不许顺手多做一片，不是"做完一片就结束这一轮"。台账顶部的 `状态：进行中（下一片：…）` 写着还有活，就接着做。
 
 ## 铁律
 
