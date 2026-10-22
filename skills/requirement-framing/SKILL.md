@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.16.0"
+  version: "0.16.1"
   status: draft
 ---
 # Requirement Framing
@@ -54,7 +54,19 @@ frame 文档顶部必须有 `状态：`。
 2. **用户提问 ≠ 用户批准**——他是在问你，不是给你开工许可
 3. **范围方案必须落定，外部依赖表必须存在**：带「（待选）」或三项全列 → 不能签；没有 `## 外部依赖` 一节 → 不能签（没有就写「无」）
 4. **已签只授权 frame 里写明的范围**——加需求、扩范围都是新的未知，先回退再谈
-5. **签字由人决定，落地可以由你执行**——用户明确说"签"之后，你改状态、填签字块，并如实写明**签字人 + 时间**。禁止的是：**没有人明确表态**你自己写上去；或把"另一个 agent 的确认"当作用户确认
+5. **签字由人决定，落地可以由你执行**——用户**明确说「签」**之后，你改状态、填签字块。禁止的是：**没有人明确表态**你自己写上去。
+
+   **什么算「明确说签」：**
+
+   | 算 | 不算——那些是批准内容，不是批准签字 |
+   |---|---|
+   | 「签」「签吧」「确认签字」「我签」「可以签了」 | 「请确认」「可以」「没问题」「看着办」「你决定」「继续」「按推荐默认」 |
+
+   **「请确认」是让你核对内容，不是授权你签字。** 用户改完文档说「请确认」，你核对；核对完，等他那一句「签」。
+
+   **签字人必须由用户口述姓名或职务**，不许写「项目发起人」「负责人」这类占位，也不许写你自己或另一个 agent。
+
+   **写字之前先问自己一句：用户说过「签」这个字吗？** 答不上来就不许写。真实案例：用户只说了「Q11-Q15 我在原文档中做了修改，请确认」，agent 就在 review.md 里写下「依据：用户……要求『请确认』」，据此填了签字块——签的是一份没有任何人授权的东西。
 6. **新未知先分类**：用户决策 → 重开问题、状态回退"待签"；待查事实（探针能查）→ 写成 §0 承重事实，**不卡签字**
 7. **改选推荐项要全量回写**——改了某题就重写所有受影响段落再改状态；只改决策点那一行，等于留下两套事实
 8. **复审已关闭**——`docs/frame/<slug>.review.md` 存在，且没有未闭环的阻断项；未闭环必须有人类裁决记录。没有复审记录就签字 = 签的是一份没被挑战过的东西
