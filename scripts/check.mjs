@@ -117,6 +117,19 @@ for (const { name, dir } of skillDirs) {
   }
 }
 
+// ---- cases 孤儿检查：cases/ 下每个文件都要在 cases/README.md 里被索引 ----
+{
+  const casesDir = path.join(ROOT, "skills/incremental-delivery/references/cases");
+  const indexFile = path.join(casesDir, "README.md");
+  if (fs.existsSync(casesDir) && fs.existsSync(indexFile)) {
+    const index = read(indexFile);
+    for (const f of fs.readdirSync(casesDir)) {
+      if (!f.endsWith(".md") || f === "README.md") continue;
+      if (!index.includes(f)) fail(`cases 孤儿（cases/README.md 里没索引）: ${f}`);
+    }
+  }
+}
+
 // ---- 术语守卫：这些词是删掉的概念，不许回流 ----
 {
   const BANNED = ["执行档", "S 档", "M 档", "三轴", "严谨度", "modes.md"];

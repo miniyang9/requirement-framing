@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.10.0"
+  version: "0.11.0"
   status: draft
 ---
 
@@ -271,6 +271,16 @@ metadata:
 - 只读或可回滚：不造真实数据、不压测、不注入故障
 - 冒烟至少覆盖：服务在、端口对、证书链能过、登录和核心路径各走一次
 - **跑挂了 → 回滚**，不是就地改代码
+
+**阶段二做不到怎么办**（要真机、要浏览器、要硬件，agent 没有手）：
+
+1. **先找工具**：浏览器 / 设备 / 桌面自动化的 MCP 或 CLI，或者一条能代替点击的命令
+2. 工具也没有 → **人代执行**，按 `references/human-executed-testing.md` 的协议
+3. 两种情况都要在 `blackbox.md` 里写明「试过什么、为什么没用自动化」
+
+**人代执行不是放宽**：人带回来的必须有用例编号 + 实际结果 + 证据；只回一句「没问题」记**未验证**，不算通过。人能拒绝——拒绝记 `未覆盖（人拒绝执行：原因）`，项目不因此卡死。
+
+**每次人代执行做完，如果 `references/cases/` 里没有这一类任务，补一篇。** 不补，库永远是空的。
 
 ### ⑤ 评审员：完整评审执行结果，给发布结论
 
