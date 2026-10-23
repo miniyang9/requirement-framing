@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.11.1"
+  version: "0.12.0"
   status: draft
 ---
 
@@ -66,6 +66,37 @@ metadata:
 | 账号 / API | 真调一次，看返回码 |
 
 盘点结果回写进 frame 那几行的 `状态` 栏（带探针和日期），然后在回复第一段说清：**能做哪些、卡在哪、什么时候解。**
+
+## 不可逆动作之前：先回答「怎么回去」
+
+**不可逆动作**：删 / 批量改生产数据、数据迁移、覆盖线上配置、对外发布（发版、发消息、上线）、给人装东西。
+
+**本地开发环境不算**——那里可以随便毁。
+
+做之前必须回答一个问题，答案写进台账：
+
+> **这一步做错了，怎么回到做之前？**
+
+| # | 答案 | 硬要求 |
+|---|---|---|
+| 1 | **能回滚** | 备份**验证过能恢复**：在副本上恢复一次，比对行数 / 校验和。**没验证过的备份等于没有** |
+| 2 | **能重放** | 操作幂等（跑两遍结果相同），且有对账口径——「源行数 = 目标行数」「金额总和相等」这类 |
+| 3 | **能绕开** | 先在影子 / 副本上跑完整一遍，差异为 0 才碰真数据；**分批**：1% → 10% → 100%，每批之间有检查点 |
+| 4 | **都不能** | **停**。要么设计一个能回去的办法，要么人逐步确认每一步 |
+
+**选了 3 就必须分批。** 一次性跑 20 万条，中途失败时你不知道停在哪、哪些已生效。
+
+**每批之后要能判定「这批对了没有」**：行数、校验和、抽样比对，任一条能用就行。**判定不了就不准进下一批。**
+
+**结果写进台账，一行**：
+
+```
+不可逆：迁移 client 表 20 万行
+回去方式：3（影子库全量差异 0 → 分批 1%→10%→100%）
+检查点：每批后 源行数=目标行数 且 金额总和相等
+```
+
+**没有这一行，不许执行。**
 
 ## 核心循环（五步）
 
