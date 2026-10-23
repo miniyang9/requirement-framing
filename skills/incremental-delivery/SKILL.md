@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.15.0"
+  version: "0.15.1"
   status: draft
 ---
 
@@ -19,6 +19,7 @@ metadata:
 1. `docs/arch/<slug>/` 下 01 / 02 / 03 齐，且 01 首行写着 `frame: docs/frame/<slug>.md`
 2. 02 开头有冻结行：`冻结：<日期>    冻结人：<角色>`
 3. **frame 是已签的**：`状态：已签`，且签字块三字段齐（签字人 / 签字日期 / 版本）。**没有签字的设计不许开工。**
+   - 如果它是**增量 frame**（顶部声明了「本文件是 `<path>` 的增量 frame」），**连基线一起读**：基线 + 增量合并，冲突处以增量为准。**收敛和黑盒的验收条数是两边之和**——只算增量那份，会漏掉基线里没被推翻的验收。
 4. **要派发时**：本片依赖的那几条契约必须已冻结（有版本号、写者不许改）。没冻结就派发 = 两个人对同一份约定各写各的。
 
 **缺设计产物**（01/02/03、冻结行）→ 退回 `solution-design`；**frame 未签** → 退回 `requirement-framing`。两条路不要合并。设计不全时开工，等于把缺口留给未来的自己。
@@ -248,7 +249,7 @@ metadata:
 
 五项收敛检查（它们和 01 的五个架构问题不是一回事）：
 
-- **frame 里每条验收标准都有对应证据**（命令 / fixture / 日志字段）？——这是需求级，缺了后面几条都白打
+- **frame 里每条验收标准都有对应证据**（命令 / fixture / 日志字段）？——这是需求级，缺了后面几条都白打。**有增量 frame 时，基线 + 增量的验收全都算**
 - 01 的五问各有对应代码 + 证据？
 - 02 的每个契约都有唯一写者，且代码里属实？
 - **02 里的 `待落地` 是否都已变成 `已落地 → 文件:行`？**（指针过期 = 文档在说谎）

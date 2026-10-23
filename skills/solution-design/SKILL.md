@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.7.3"
+  version: "0.7.4"
   status: draft
 ---
 
@@ -15,9 +15,14 @@ metadata:
 
 ## 门禁：先找已签的 frame，再做体检
 
-1. 找 `docs/frame/*.md`，读顶部 `状态：`
-2. 有多份已签 → **问用户指认**，不要按修改时间猜
-3. 先读 `## 0. 承重事实`，再读全文
+1. 找 `docs/frame/*.md`，读顶部 `状态：`，以及**有没有「增量 frame」声明**
+2. **增量 frame 不算「多份已签」。** 如果一份 frame 的顶部写着「本文件是 `<path>` 的增量 frame」，那它和它的基线是**一套**：基线 + 增量合并，**冲突处以增量为准**。不问用户指认。
+3. 只有**两份互相没有声明关系的已签 frame** 才问用户指认。不要按修改时间猜。
+4. 先读 `## 0. 承重事实`，再读全文。增量 frame 要把基线的 §0 一起读——增量只写变了的那部分，没写的仍然有效。
+
+**合并的顺序不能反**：先基线后增量，逐条覆盖。反过来会把增量的旧值当成新值。
+
+**验收条数是两边之和，不是增量里写的那些。** 增量 frame 的 §7 只列新增/改写的验收；基线那 13 条里没被推翻的仍然有效。漏读基线 = 少验一批。
 
 **只有"已签"能进。** 待答 / 待签 → 退回 `requirement-framing`，一句话说明，不要就地脑补需求。
 
