@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.14.0"
+  version: "0.14.1"
   status: draft
 ---
 
@@ -216,7 +216,17 @@ metadata:
 
 **返工理由是硬字段。** 没有它，三个月后你不知道偏差通常发生在哪一跳。
 
-**台账顶部有一行状态**：`状态：进行中（第 N 片）`。每片开工前先更新它；全部收敛后改 `状态：已交付`。
+**台账顶部那一行状态，只有三个值：**
+
+| 值 | 什么时候写 |
+|---|---|
+| `进行中（第 N 片）` | 正常推进 |
+| `待交付` | 所有片 5/5，正在走发布闸门 |
+| `已交付` | 四条件全过 + 人类确认 |
+
+**「已上线」「已部署」「已发布」不是状态。** 它们是**发布事实**，写在台账正文那一节里。
+
+状态行写「已上线」= **用一次部署冒充一次交付**——两者之间还差着全量黑盒、冒烟、评审结论、人类确认。真实案例：CardGame 的台账写着 `状态：已上线`，而黑盒一次都没做过、交付四条件一条都没走。
 
 **本片让哪个契约落地了？** 有 → 去 `02-contracts.md` 把那一行的 `待落地` 改成 `已落地 → 文件:行`。这是唯一需要动设计文档的时刻，别攒着——攒着就一定会忘。
 
@@ -369,7 +379,7 @@ metadata:
 **状态流转**：
 
 ```
-进行中 → 待发布（前三条满足，等你拍板）→ 已交付（你认可）
+进行中 → 待交付（进发布闸门时转）→ 已交付（四条件全过 + 你认可）
 ```
 
 **人类不认可 → 按缺口类型回**：代码缺陷回那一片重做；设计缺口回 `solution-design`；需求变了回 `requirement-framing`；用例本身不够 → 回 ① 补用例重走。
