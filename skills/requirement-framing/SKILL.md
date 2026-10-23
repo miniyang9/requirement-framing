@@ -3,7 +3,7 @@ name: requirement-framing
 description: "Expand a few-sentence request into a reviewable project frame before any planning, task decomposition, or code. Not for a one-off answer, plan, research report or article; not for a single obvious edit that one sentence already specifies. Applies to delegated agents too: produce a draft frame marked pending and hand it back to the parent; never self-sign. Use when the deliverable will run more than once — a script, service, tool, agent, scheduled push, daily digest, monitor, bot, or a change to an existing codebase — regardless of whether the implementation turns out to be code or a scheduler entry. 会重复运行的产物、以及对现有服务或代码库的改造都算（「加个功能」「做个自动化的」「帮我理一下需求」）。Scope: L1 only — ask, expand, sign."
 license: MIT
 metadata:
-  version: "0.16.1"
+  version: "0.16.2"
   status: draft
 ---
 # Requirement Framing
@@ -165,9 +165,26 @@ Q1 …（每题一句，附推荐答案）
 
 ## 签字
 签字人：____    签字日期：____    版本：1
+
+## 偏离（可选；只增不改）
+| 日期 | 涉及 | 变更 | 授权（人类原话） | 依据 |
 ```
 
 判据 6 说的「待查事实」在 T1 下写进 §4 最大歧义，因为 T1 没有 §0。
+
+**`## 偏离` 是签字之后才用的登记节，起草时留空或省略。** 它记的是「签字时承诺的东西，后来怎么处置的」：没测的、没条件测的、测了不达标但人类接受的。
+
+| 日期 | 涉及 | 变更 | 授权（人类原话） | 依据 |
+|---|---|---|---|---|
+| 2026-10-22 | §7 #7/#9/#12/#13 | 以风险接受关闭，不验证 | 「当前人工项风险我接受，继续往下推进」 | ADR-24 |
+
+三条硬规矩：
+
+- **只增不改**——已写的行不许编辑，要改就加新行
+- **每行必须指一个 ADR**，ADR 里必须有**人类原话**
+- **「接受风险」永远不等于「通过」**——偏离节、交付节、台账里都只能写「未验证 / 接受风险」
+
+**改基线不写在这一节。** 范围、部署口径、架构这类变了，回 `requirement-framing` 重签一个新版本——那是变更，不是偏离。
 
 **注意**：上面是**最小集，不是全集**。`## 待你回答` 和签字块这两节，T1 和 T2 都必须有——少了它们，frame 就不再是「提问与签字的载体」，问题只活在聊天里，换个会话就丢了。
 

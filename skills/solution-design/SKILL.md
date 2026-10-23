@@ -3,7 +3,7 @@ name: solution-design
 description: "Design the shape of a signed-off requirement: architecture, contracts, decision records, and the cheapest skeleton that could disprove the design. Use when a `docs/frame/<slug>.md` is signed (`状态：已签`) and the user asks how to structure it — layering, module boundaries, interfaces, data ownership, tech choice, or what to build first. Requires a signed frame; without one, go back to requirement-framing. Not for writing feature code and not for task dispatch."
 license: MIT
 metadata:
-  version: "0.7.2"
+  version: "0.7.3"
   status: draft
 ---
 
@@ -137,11 +137,23 @@ metadata:
 
 不写故事，不写背景铺垫。
 
-**ADR 的边界：它只给「frame 没覆盖的」决定用。**
+**ADR 的边界：先分清改的是基线还是验证状态。**
 
-如果这条决定的改动对象**出现在 frame 的 §0 承重事实或 §4 决策点里**，那它不是设计决策，是**需求变更** → 停，回 `requirement-framing` 改 frame、重签。
+| 改的是 | 例子 | 处置 | 重签 |
+|---|---|---|---|
+| **基线** | 部署口径、范围、架构、契约、加 / 减功能 | 回对应层改，重签 | **要** |
+| **验证状态** | 没测、没条件测、测了不达标但人类接受 | 记偏离 + ADR + frame 的 `## 偏离` 节 | 不用 |
 
-**探针：ADR 里一旦写出「覆盖 frame X」这种字样，就是越线信号。** 它说明你正在用一条 ADR 改需求，而需求改动需要有人重新签字。
+**判据一句话：方案的结论会不会变？**
+
+- 不会变，只是「还没证据」或「证据不达标」→ **验证状态** → 记偏离，不动基线
+- 会变 → **基线** → 重签
+
+**不许用 ADR 悄悄改基线。** ADR 里出现「覆盖 frame X」这种字样就是越线信号——那是变更，要有人重新签字。
+
+**但「记」这一步不许省。** 偏离必须三件齐：① 写进 frame 的 `## 偏离` 节（只增不改）② 一条 ADR 含**人类原话** ③ 交付节逐项列为已知风险。
+
+（行业依据：配置管理标准 EIA-649 把 Deviation / Waiver / Change Request 分作三件事——前两个不动基线，只有变更要重走审批。测试侧对应 ISTQB 的「残余风险」，由利益相关者接受并登记。）
 
 ## 第 4 步：L5 骨架判据
 

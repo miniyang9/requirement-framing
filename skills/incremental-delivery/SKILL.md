@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.14.2"
+  version: "0.15.0"
   status: draft
 ---
 
@@ -222,6 +222,7 @@ metadata:
 |---|---|
 | `进行中（第 N 片）` | 正常推进 |
 | `待交付` | 所有片 5/5，正在走发布闸门 |
+| `带残余风险交付` | 人类明确选择在四条件未满足时发布；未满足项已逐条登记 |
 | `已交付` | 四条件全过 + 人类确认 |
 
 **「已上线」「已部署」「已发布」不是状态。** 它们是**发布事实**，写在台账正文那一节里。
@@ -382,6 +383,10 @@ metadata:
 
 前三条机器能给，**第四条只能人给**。
 
+**四条件只是「干净交付」那一条路。** 人类可以在不满足它们的情况下发布——但那要写 `带残余风险交付`，不是 `已交付`。
+
+**「已交付」必须四条全过**，否则这个词就不携带任何信息：读台账的人分不出这是干净交付还是强行发布。
+
 **状态流转**：
 
 ```
@@ -396,6 +401,7 @@ metadata:
 ## 交付 · <日期>
 范围：<frame 的范围方案>
 依据：第 N 片 `收敛：5/5`；黑盒 <N> 条全绿；评审结论：可发布（<日期>）
+偏离：<frame 的 `## 偏离` 节里本项目相关的行，逐条列出；没有就写 无>
 已知风险：<从 03 的 ADR 汇总那些标了「已知风险」的依赖，没有就写 无>
 人类确认：<姓名 / 日期>
 未做：<明确列出的没做项，没有就写 无>
