@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.14.1"
+  version: "0.14.2"
   status: draft
 ---
 
@@ -273,7 +273,13 @@ metadata:
 
 角色两个，有先后：设计员写用例 → 评审员审用例（**这是门**）→ 设计员执行 → 评审员完整评审。
 
-**设计员：只写用例，不执行。** 产出 `docs/build/<slug>.blackbox.md`。每条：编号 / **环境** / 维度 / 前置 / 步骤 / **可判定的期望** / 怎么收集证据。
+**设计员：新 subagent，只写用例，不执行。**
+
+给它**只有两样**：frame（§7 验收 + 范围方案）+ 一条能把它跑起来的命令。**不给代码、不给你的实现思路、不给对话历史。**
+
+给了就是白盒——**照着实现写的用例，永远会通过**。写用例的人必须只知道"这东西应该做到什么"，不知道"它是怎么做的"。
+
+产出 `docs/build/<slug>.blackbox.md`。每条：编号 / **环境** / 维度 / 前置 / 步骤 / **可判定的期望** / 怎么收集证据。
 
 `环境` 只能填 `本地` 或 `生产`。**生产组里不许出现破坏性用例**（删数据、并发压测、注入故障）——那些只能在本地做。
 
