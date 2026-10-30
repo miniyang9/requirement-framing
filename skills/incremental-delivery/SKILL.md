@@ -3,7 +3,7 @@ name: incremental-delivery
 description: "Turn signed design documents into verified increments: pick the next slice, build it, verify it against the design, and record what happened. Use when `docs/arch/` already has 01-architecture, 02-contracts and 03-decisions for a signed requirement, and the user wants to start building, resume building, or asks what to do next. Solo (single writer) is implemented; multi-writer dispatch is not."
 license: MIT
 metadata:
-  version: "0.15.1"
+  version: "0.16.0"
   status: draft
 ---
 
@@ -201,6 +201,15 @@ metadata:
 返工：无 / <七类之一 + 一句话>
 ```
 
+**这两个字段是硬要求，缺一不算这一片收尾：**
+
+- `收敛：x/5`——五项收敛检查的结果，缺哪条写清楚
+- `返工：`——`无` 或者七类之一 + 一句话
+
+**台账的格式可以变，这两个字段不能变。** 分节写、表格写、按 S1/S2 编号写都行；**少一个字段，这一片就等于没对账**。
+
+真实教训：CardGame 后来两条增量（`cardgame-rounds`、`cardgame-turns`）的台账换了写法，**`收敛：` 一次都没出现过**——收敛判定从第 1 片漏到第 5 片，没人发现，因为没有任何东西要求它必须存在。
+
 **返工理由分七类**（硬字段，发生时必填）：
 
 | 类 | 什么时候填 | 回哪 |
@@ -246,6 +255,8 @@ metadata:
 ### 5 收敛判定
 
 **每片收尾都要重跑，不是只在最后跑一次。** 结果写进这一片的 `收敛：x/5` 行——不要另开一节记录收敛状态，那种快照一定会过期。
+
+**开工前先看上一个片有没有这两个字段。** 上一片缺 `收敛：` 或 `返工：` → **先补，再做本片**。补不出来说明那一片根本没对过账，它的「完成」是假的。
 
 五项收敛检查（它们和 01 的五个架构问题不是一回事）：
 
